@@ -5,10 +5,11 @@ import (
 	"fmt"
 )
 
-const arr_size int = 3
+// SIZE is the default array size
+const SIZE int = 3
 
 func main() {
-	var x [arr_size]float64 // x is an array that is default initialized
+	var x [SIZE]float64 // x is an array that is default initialized
 	y := [5]int{1, 2, 3}
 
 	x[1] = 3.14
@@ -21,7 +22,7 @@ func main() {
 	}
 }
 
-func foo(arr [arr_size]float64) {
+func foo(arr [SIZE]float64) {
 	fmt.Println("x =", arr)
 	fmt.Println("len(x) =", len(arr))
 }
