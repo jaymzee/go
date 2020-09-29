@@ -5,10 +5,10 @@ import (
 	"os"
 )
 
+const log2Flags = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile
+
 // log2 is a custom logger
-var log2 = log.New(os.Stdout, "log2: ", log.Ldate | log.Ltime |
-										log.Lmicroseconds |
-										log.Lshortfile)
+var log2 = log.New(os.Stdout, "log2: ", log2Flags)
 
 func sum(x int, y int) int {
 	result := x + y
