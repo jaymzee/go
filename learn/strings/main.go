@@ -7,8 +7,10 @@ import (
 )
 
 func intToStr(i int) {
-	fmt.Printf("%4d unicode: %q\n", i, string(i))
-	fmt.Printf("%4d int:     %q\n", i, strconv.Itoa(i))
+	fmt.Printf("%4d char:    %q\n", i, i) // %q = 'A', %c = A
+	fmt.Printf("%4d unicode: %#U\n", i, i) // %U = U+0041, %#U = U+0041 'A'
+	fmt.Printf("%4d string:  %q\n", i, string(i))
+	fmt.Printf("%4d itoa:    %q\n", i, strconv.Itoa(i))
 }
 
 func int64ToStr(i int64) {
@@ -23,7 +25,7 @@ func strToInt(s string) {
 	for _, b := range(b) {
 		n, err := strconv.ParseInt(s, b, 64)
 		if err == nil {
-			fmt.Printf("%q base %2d 0x%04x\n", s, b, n)
+			fmt.Printf("%q base %2d %#04x\n", s, b, n)
 		}
 	}
 }
