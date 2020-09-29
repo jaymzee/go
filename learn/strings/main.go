@@ -7,15 +7,15 @@ import (
 )
 
 func intToStr(i int) {
-	fmt.Printf("unicode: %s\n", string(i))
-	fmt.Printf("int:     %s\n", strconv.Itoa(i))
+	fmt.Printf("%4d unicode: %q\n", i, string(i))
+	fmt.Printf("%4d int:     %q\n", i, strconv.Itoa(i))
 }
 
 func int64ToStr(i int64) {
-	fmt.Printf("dec:     %s\n", strconv.FormatInt(i, 10))
-	fmt.Printf("hex:     0x%s\n", strconv.FormatInt(i, 16))
-	fmt.Printf("oct:     0%s\n", strconv.FormatInt(i, 8))
-	fmt.Printf("bin:     %s\n", strconv.FormatInt(i, 2))
+	fmt.Printf("%4d dec:     %q\n", i, strconv.FormatInt(i, 10))
+	fmt.Printf("%4d hex:     %q\n", i, strconv.FormatInt(i, 16))
+	fmt.Printf("%4d oct:     %q\n", i, strconv.FormatInt(i, 8))
+	fmt.Printf("%4d bin:     %q\n", i, strconv.FormatInt(i, 2))
 }
 
 func strToInt(s string) {
@@ -23,7 +23,7 @@ func strToInt(s string) {
 	for _, b := range(b) {
 		n, err := strconv.ParseInt(s, b, 64)
 		if err == nil {
-			fmt.Printf("%s base %2d 0x%04x\n", s, b, n)
+			fmt.Printf("%q base %2d 0x%04x\n", s, b, n)
 		}
 	}
 }
@@ -36,6 +36,10 @@ func main() {
 	strToInt("AB")
 	strToInt("42")
 	strToInt("0110")
-	s := fmt.Sprintf("%+8d", 97)
-	fmt.Println(s)
+	fmt.Printf("%q\n", fmt.Sprintf("%+8d", 97))
+
+	// print in hex with spaces
+	fmt.Printf("% x\n", "Hello World!")
+	sl := [5]int{10,11,12,13,3}
+	fmt.Printf("%T %02x\n", sl, sl)
 }
