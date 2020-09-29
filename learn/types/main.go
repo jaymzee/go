@@ -1,4 +1,4 @@
-// goodbye is a program
+// types demonstrates simple type aliases
 package main
 
 import (
@@ -18,9 +18,8 @@ const (
 var weekend = []string{"Saturday", "Sunday"}
 var timeZone = map[string]TZ{"UTC": UTC, "EST": EST}
 
-// so uhm
 func main() {
 	fmt.Println("timeZone:", timeZone)
 	fmt.Println("weekend:", weekend)
-	fmt.Println("typeZone[\"EST\"]:", timeZone["EST"])
+	fmt.Println("timeZone[\"EST\"]:", timeZone["EST"])
 }

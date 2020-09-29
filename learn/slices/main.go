@@ -1,4 +1,4 @@
-// slices is a program that demonstrates slices in go
+// slices demonstrates using slices in go
 package main
 
 import (
@@ -8,8 +8,7 @@ import (
 func main() {
 	var x []float64 // empty slice (actually points to a null pointer)
 	y := []float64{1, 2, 3}
-	z := make([]float64, 10, 100)
-
+	z := make([]float64, 10, 100) // length=10, capacity=100
 	y[1] = 3.14
 	z[3] = 42.123
 	printSlice("x", x)
@@ -49,5 +48,5 @@ func main() {
 
 // printSlice prints a slice, it's length and it's capacity
 func printSlice(name string, s []float64) {
-	fmt.Printf("%v=%v, len=%d, cap=%d\n", name, s, len(s), cap(s))
+	fmt.Printf("%s=%v, len=%d, cap=%d\n", name, s, len(s), cap(s))
 }

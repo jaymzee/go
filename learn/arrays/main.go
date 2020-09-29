@@ -1,4 +1,4 @@
-// arrays is a program that demonstrates arrays in go
+// arrays demonstrates using arrays in go
 package main
 
 import (
