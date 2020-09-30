@@ -9,10 +9,7 @@ type T struct {
 }
 
 func main() {
-	var s T
-	s.a = 3
-	s.b = 5
-	s.c = 3.14
-	s.d = "joe"
-	fmt.Printf("%v %T\n", s, s)
+	s := T{a:3, b:5, c:3.14, d:"joe"}
+	s.b = 42
+	fmt.Printf("%#v\n", s)
 }
