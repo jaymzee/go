@@ -7,9 +7,8 @@ type Magnitude interface {
 const PI = 3.141592654
 
 func main() {
-	var m Magnitude
 	x := &Point{3, 4}
-	m = x
+	var m Magnitude = x
 	mag := m.Abs()
 	m = &Point3{3, 4, 5}
 	mag += m.Abs()
