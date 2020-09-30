@@ -20,4 +20,8 @@ func main() {
 	fmt.Println(*bFlag)
 	fmt.Println(*fFlag)
 	fmt.Println(*sFlag)
+
+	for k, v := range flag.Args() {
+		fmt.Println(k, v)
+	}
 }
