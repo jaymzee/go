@@ -7,11 +7,11 @@ type Magnitude interface {
 const PI = 3.141592654
 
 func main() {
-	x := &Point{3, 4}
+	x := &Point{X: 3, Y: 4}
 	var m Magnitude = x
 	mag := m.Abs()
-	m = &Point3{3, 4, 5}
+	m = &Point3{X: 3, Y: 4, Z: 5}
 	mag += m.Abs()
-	m = Polar{2.0, PI / 2}
+	m = Polar{R: 2.0, ϴ: PI / 2}
 	mag += m.Abs()
 }
