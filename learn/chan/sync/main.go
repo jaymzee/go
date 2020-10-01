@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func worker(done chan bool) {
+func worker(done chan<- bool) {
 	fmt.Print("working...")
 	time.Sleep(1 * time.Second)
 	fmt.Println("done")
