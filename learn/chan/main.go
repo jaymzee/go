@@ -1,11 +1,13 @@
 package main
 
 import (
+	"os"
 	"log"
 	"fmt"
 	"time"
 )
 
+var lg = log.New(os.Stdout, "", log.Ldate | log.Ltime | log.Lmicroseconds)
 
 func main() {
 	ch := make(chan string)
@@ -18,14 +20,14 @@ func main() {
 			} else {
 				msg = fmt.Sprintf("pong %d", i)
 			}
-			log.Printf("send %s", msg)
+			lg.Printf("send %s", msg)
 			ch <- msg
 		}
 	}()
 
 	for i := 0; i < 8; i++ {
 		msg := <-ch
-		log.Println("recv",msg)
+		lg.Printf("recv %s", msg)
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
