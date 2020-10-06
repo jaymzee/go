@@ -2,6 +2,7 @@ package point
 
 import "math"
 
+// X and Y are public fields because they are capitalized
 type Point2 struct {
 	X, Y float64
 }
