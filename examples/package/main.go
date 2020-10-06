@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"jaymzee/learn/point"
+	"github.com/jaymzee/go/examples/point"
 )
 
 func main() {

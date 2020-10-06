@@ -1,6 +1,6 @@
 package main
 
-import "jaymzee/learn/point"
+import "github.com/jaymzee/go/examples/point"
 
 type Magnitude interface {
 	Abs() float64
