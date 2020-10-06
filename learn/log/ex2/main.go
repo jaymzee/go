@@ -17,7 +17,7 @@ func sum(x int, y int) int {
 }
 
 func main() {
-	log.Println("hello world")
+	log2.Println("hello")
 	z := 0
 	z = sum(z, 5)
 	z = sum(z, 8)

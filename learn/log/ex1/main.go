@@ -17,6 +17,8 @@ func main() {
 	log.SetFlags(logFlags)
 	log.SetOutput(os.Stdout)
 	log.SetPrefix("log: ")
+
+	log.Println("hello")
 	z := 0
 	z = sum(z, 5)
 	z = sum(z, 8)
