@@ -1,5 +1,7 @@
 package main
 
+// demonstrate cleaning up when CTRL-C is pressed
+
 import (
 	"log"
 	"os"
