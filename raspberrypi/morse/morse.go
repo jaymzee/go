@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"github.com/jaymzee/go/raspberrypi/gpio"
+	"log"
 	"strings"
 	"time"
 )
