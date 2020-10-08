@@ -10,10 +10,10 @@ import (
 )
 
 func main() {
-	pinFlag := flag.Int("p", 6, "gpio pin number")
+	pinFlag := flag.Int("p", -1, "gpio pin number")
 	flag.Parse()
-	if flag.NArg() < 1 {
-		fmt.Println("Usage: morse [-p pin] message")
+	if *pinFlag < 0 || flag.NArg() < 1 {
+		fmt.Println("Usage: morse -p pin message")
 		os.Exit(1)
 	}
 
