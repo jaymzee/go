@@ -19,6 +19,6 @@ func NewLED(pin int) *LED {
 	return &LED{pin: pin, file: file}
 }
 
-func (led *LED) Set(bit byte) {
+func (led *LED) Out(bit byte) {
 	led.file.Write([]byte{'0' + bit})
 }

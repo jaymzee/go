@@ -9,9 +9,9 @@ func main() {
 	led := gpio.NewLED(6)
 
 	for i := 0; i < 4; i++ {
-		led.Set(0)
+		led.Out(0) // turn on LED
 		time.Sleep(500 * time.Millisecond)
-		led.Set(1)
+		led.Out(1) // turn off LED
 		time.Sleep(500 * time.Millisecond)
 	}
 }
