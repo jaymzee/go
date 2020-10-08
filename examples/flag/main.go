@@ -2,8 +2,8 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 )
 
 func main() {
@@ -15,13 +15,13 @@ func main() {
 	sFlag := flag.String("s", "apple", "a string")
 	flag.Parse()
 
-	fmt.Println(*nFlag)
-	fmt.Println(m)
-	fmt.Println(*bFlag)
-	fmt.Println(*fFlag)
-	fmt.Println(*sFlag)
+	fmt.Println("-n", *nFlag)
+	fmt.Println("-m", m)
+	fmt.Println("-b", *bFlag)
+	fmt.Println("-f", *fFlag)
+	fmt.Printf("-s %q\n", *sFlag)
 
-	for k, v := range flag.Args() {
-		fmt.Println(k, v)
+	for i, v := range flag.Args() {
+		fmt.Printf("arg[%d] = %q\n", i, v)
 	}
 }
