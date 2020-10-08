@@ -6,6 +6,7 @@ import (
 	"github.com/jaymzee/go/raspberrypi/gpio"
 	"log"
 	"os"
+	"os/signal"
 	"strings"
 )
 
@@ -26,4 +27,15 @@ func main() {
 	for {
 		sendString(led, msg)
 	}
+}
+
+// CTRL-C handler
+func setupCtrlCHandler(led *gpio.LED) {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		led.Out(1) // turn off LED
+		os.Exit(0)
+	}()
 }
