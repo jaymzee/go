@@ -62,7 +62,7 @@ func dah(led *gpio.LED) {
 
 func sendChar(led *gpio.LED, ch rune) {
 	if code, found := morse[ch]; found {
-		log.Printf("%q %c\n", code, ch)
+		log.Printf("%c %q\n", ch, code)
 		for _, sym := range code {
 			switch sym {
 			case '.':
