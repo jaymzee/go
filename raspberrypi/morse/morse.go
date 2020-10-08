@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"github.com/jaymzee/go/raspberrypi/gpio"
 	"strings"
 	"time"
@@ -61,6 +62,7 @@ func dah(led *gpio.LED) {
 
 func sendChar(led *gpio.LED, ch rune) {
 	code := morse[ch]
+	log.Printf("%q %c\n", code, ch)
 	for _, sym := range code {
 		switch sym {
 		case '.':
@@ -78,8 +80,10 @@ func sendString(led *gpio.LED, msg string) {
 	for _, ch := range strings.ToUpper(msg) {
 		switch ch {
 		case ' ':
+			log.Println("SPC")
 			time.Sleep(400 * time.Millisecond)
 		case '.':
+			log.Println("STOP")
 			time.Sleep(1 * time.Second)
 		default:
 			sendChar(led, ch)
