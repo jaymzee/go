@@ -61,19 +61,21 @@ func dah(led *gpio.LED) {
 }
 
 func sendChar(led *gpio.LED, ch rune) {
-	code := morse[ch]
-	log.Printf("%q %c\n", code, ch)
-	for _, sym := range code {
-		switch sym {
-		case '.':
-			dit(led)
-		case '-':
-			dah(led)
-		default:
-			panic("invalid character in morse code table")
+	if code, found := morse[ch]; found {
+		log.Printf("%q %c\n", code, ch)
+		for _, sym := range code {
+			switch sym {
+			case '.':
+				dit(led)
+			case '-':
+				dah(led)
+			default:
+				panic("invalid character in morse code table")
+			}
 		}
+		time.Sleep(200 * time.Millisecond)
 	}
-	time.Sleep(200 * time.Millisecond)
+	// ignore characters not in morse map
 }
 
 func sendString(led *gpio.LED, msg string) {
