@@ -1,12 +1,13 @@
 package gpio
 
 import (
-	"os"
 	"fmt"
+	"io"
+	"os"
 )
 
 type LED struct {
-	pin int
+	pin  int
 	file *os.File
 }
 
@@ -19,6 +20,23 @@ func NewLED(pin int) *LED {
 	return &LED{pin: pin, file: file}
 }
 
-func (led *LED) Out(bit byte) {
-	led.file.Write([]byte{'0' + bit})
+//Set sets the LED to v
+func (led *LED) Set(v bool) {
+	if v {
+		led.On()
+	} else {
+		led.Off()
+	}
+}
+
+//On turns on led (active low)
+func (led *LED) On() {
+	led.file.Seek(0, io.SeekStart)
+	led.file.Write([]byte{'0'})
+}
+
+//Off turns off led (active low)
+func (led *LED) Off() {
+	led.file.Seek(0, io.SeekStart)
+	led.file.Write([]byte{'1'})
 }

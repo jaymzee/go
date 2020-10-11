@@ -35,7 +35,7 @@ func setupCtrlCHandler(led *gpio.LED) {
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-		led.Out(1) // turn off LED
+		led.Off()
 		os.Exit(0)
 	}()
 }

@@ -47,16 +47,16 @@ var morse = map[rune]string{
 }
 
 func dit(led *gpio.LED) {
-	led.Out(0) // turn on LED
+	led.On()
 	time.Sleep(100 * time.Millisecond)
-	led.Out(1) // turn off LED
+	led.Off()
 	time.Sleep(100 * time.Millisecond)
 }
 
 func dah(led *gpio.LED) {
-	led.Out(0)
+	led.On()
 	time.Sleep(300 * time.Millisecond)
-	led.Out(1)
+	led.Off()
 	time.Sleep(100 * time.Millisecond)
 }
 
