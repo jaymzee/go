@@ -8,8 +8,8 @@ func main() {
 	const poly = 0xaa2255dd
 	const iv = 0x1
 
-	period := 0
-	x := iv
+	var period uint32 = 0
+	var x uint32 = iv
 	for {
 		fb := x & 1
 		x = x >> 1
