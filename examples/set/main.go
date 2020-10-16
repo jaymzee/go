@@ -4,7 +4,7 @@ package main
 
 import "fmt"
 
-type void struct{}
+type Unit struct{}
 
 func main() {
 	// map from string to boolean
@@ -17,10 +17,10 @@ func main() {
 	fmt.Println(basket["potato"])
 
 	// alternative (avoids memory allocation used by booleans)
-	var member void
-	animals := make(map[string]void)
-	animals["monkey"] = member
-	animals["bear"] = member
+	var unit Unit
+	animals := make(map[string]Unit)
+	animals["monkey"] = unit
+	animals["bear"] = unit
 	// test for membership
 	if _, ok := animals["monkey"]; ok {
 		fmt.Println("monkey")
