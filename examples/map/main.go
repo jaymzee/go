@@ -2,25 +2,29 @@ package main
 
 import "fmt"
 
-var lookup = map[string]int{
+var channel = map[string]int{
 	"abc": 7,
 	"fox": 5,
 	"cbs": 2,
 	"nbc": 4,
 }
 
+func printChannel(network string) {
+	if ch, ok := channel[network]; ok {
+		fmt.Printf("channel[%q] = %d\n", network, ch)
+	} else {
+		fmt.Printf("could not find a channel for %q\n", network)
+	}
+}
+
 func main() {
-	fmt.Println("nbc =", lookup["nbc"])
-	// if key doesn't exist, returns zero value of type
-	fmt.Println("pbs =", lookup["pbs"])
+	// if key isn't found in the map, a zero value of the type is returned
+	fmt.Println("nbc =", channel["nbc"])
+	fmt.Println("pbs =", channel["pbs"])
 
-	if v, ok := lookup["abc"]; ok {
-		// key exists
-		fmt.Println("abc =", v)
-	}
-
-	if _, ok := lookup["pbs"]; !ok {
-		// key does not exist
-		fmt.Println("could not find pbs")
-	}
+	// for handling this better (e.g. the zero value is used by valid entries)
+	// there is a second boolean value returned by the map
+	// that may be queried to see if the key exists
+	printChannel("abc")
+	printChannel("pbs")
 }
