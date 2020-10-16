@@ -6,11 +6,13 @@ import (
 	"os"
 )
 
+// Button represents a button connected to a gpio pin
 type Button struct {
 	pin  int
 	file *os.File
 }
 
+// NewButton creates a new Button for the gpio pin number given
 func NewButton(pin int) *Button {
 	filename := fmt.Sprintf("/sys/class/gpio/gpio%d/value", pin)
 
@@ -22,6 +24,7 @@ func NewButton(pin int) *Button {
 	return &Button{pin: pin, file: file}
 }
 
+// Pressed return true if the button is pressed (active low)
 func (btn *Button) Pressed() bool {
 	buffer := make([]byte, 16)
 
