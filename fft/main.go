@@ -41,11 +41,32 @@ func Shuffle(out []complex128, in []complex128) {
 	}
 }
 
+func Fft(x []complex128) {
+	N := len(x)
+	log2N := uint(math.Log2(float64(N)))
+
+	Shuffle(x, x)
+
+	for s := uint(1); s <= log2N; s++ {
+		m := 1 << s
+		m_2 := m >> 1
+		W_m := Twiddle(-m)
+		for k := 0; k < N; k += m {
+			W := complex(1, 0)
+			for j := 0; j < m_2; j++ {
+				t := x[k + j]
+				u := W * x[k + j + m_2]
+				x[k + j] = t + u
+				x[k + j + m_2] = t - u
+				W *= W_m
+			}
+		}
+	}
+}
 
 func main() {
-	x := []complex128{1,2,3,4}
-	y := make([]complex128, 4)
+	x := []complex128{1,2,3,4,3,2,1,0}
 
-	Shuffle(y, x)
-	fmt.Println(y)
+	Fft(x)
+	fmt.Println(x)
 }
