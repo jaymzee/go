@@ -1,6 +1,7 @@
 package main
 
 // #cgo CFLAGS: -g -Wall
+// #cgo LDFLAGS:
 // #include <stdlib.h>
 // #include "greeter.h"
 import "C"
