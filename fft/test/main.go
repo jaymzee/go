@@ -12,11 +12,12 @@ func printArray(name string, s []complex128) {
 }
 
 func main() {
-	x := []complex128{1, 2, 3, 4, 3, 2, 1, 0}
-	X := fft.Fft(x)
+	x := [8]complex128{1, 2, 3, 4, 3, 2, 1, 0}
+	x1 := x[:]
+	X := fft.Fft(x1)
 	x2 := fft.Ifft(X)
 
-	printArray("x", x)
+	printArray("x", x1)
 
 	fmt.Println("X = fft(x)")
 	printArray("X", X)
