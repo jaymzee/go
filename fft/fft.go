@@ -46,27 +46,29 @@ func fftInPlace(x []complex128, sign int) {
 	log2N := log2(N)
 	for s := 1; s <= log2N; s++ {
 		m := 1 << uint(s)
-		m_2 := m >> 1
-		W_m := twiddle(sign * m)
+		m2 := m >> 1
+		Wm := twiddle(sign * m)
 		for k := 0; k < N; k += m {
 			W := complex(1, 0)
-			for j := 0; j < m_2; j++ {
+			for j := 0; j < m2; j++ {
 				t := x[k+j]
-				u := W * x[k+j+m_2]
+				u := W * x[k+j+m2]
 				x[k+j] = t + u
-				x[k+j+m_2] = t - u
-				W *= W_m
+				x[k+j+m2] = t - u
+				W *= Wm
 			}
 		}
 	}
 }
 
+// Fft computes the Fast Fourier Transform
 func Fft(x []complex128) []complex128 {
 	X := shuffle(x)
 	fftInPlace(X, -1)
 	return X
 }
 
+// Ifft computes the Inverse Fast Fourier Transform
 func Ifft(X []complex128) []complex128 {
 	x := shuffle(X)
 	fftInPlace(x, 1)

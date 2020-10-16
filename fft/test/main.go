@@ -7,14 +7,14 @@ import (
 
 func printArray(name string, s []complex128) {
 	for i, num := range s {
-		fmt.Printf("%s[%d] = %v\n", name, i, num);
+		fmt.Printf("%s[%d] = %v\n", name, i, num)
 	}
 }
 
 func main() {
-	x := []complex128{1,2,3,4,3,2,1,0}
+	x := []complex128{1, 2, 3, 4, 3, 2, 1, 0}
 	X := fft.Fft(x)
-	x_ := fft.Ifft(X)
+	x2 := fft.Ifft(X)
 
 	printArray("x", x)
 
@@ -22,5 +22,5 @@ func main() {
 	printArray("X", X)
 
 	fmt.Println("x = fft(X)")
-	printArray("x", x_)
+	printArray("x", x2)
 }
