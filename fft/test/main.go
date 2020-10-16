@@ -23,6 +23,4 @@ func main() {
 
 	fmt.Println("x = fft(X)")
 	printArray("x", x_)
-
-	fmt.Println(int(real(x_[1])))
 }
