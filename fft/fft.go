@@ -5,6 +5,18 @@ import (
 	"math/cmplx"
 )
 
+func log2(x int) int {
+	y := 0
+	for {
+		x >>= 1
+		if x == 0 {
+			break
+		}
+		y++
+	}
+	return y
+}
+
 func twiddle(N int) complex128 {
 	angle := 2 * math.Pi / float64(N)
 	return cmplx.Exp(complex(0, angle))
@@ -16,24 +28,22 @@ func reverseBits(x uint32, w int) uint32 {
 	x = (x&0xf0f0f0f0)>>4 | (x&0x0f0f0f0f)<<4
 	x = (x&0xff00ff00)>>8 | (x&0x00ff00ff)<<8
 	x = x>>16 | x<<16
-
 	return x >> (32 - uint(w))
 }
 
 func shuffle(in []complex128) []complex128 {
 	N := len(in)
 	out := make([]complex128, N)
-	w := int(math.Log2(float64(N)))
+	w := log2(N)
 	for a := 0; a < N; a++ {
 		out[reverseBits(uint32(a), w)] = in[a]
 	}
-
 	return out
 }
 
 func Fft(x []complex128) []complex128 {
 	N := len(x)
-	log2N := int(math.Log2(float64(N)))
+	log2N := log2(N)
 	X := shuffle(x)
 	for s := 1; s <= log2N; s++ {
 		m := 1 << uint(s)
@@ -50,13 +60,12 @@ func Fft(x []complex128) []complex128 {
 			}
 		}
 	}
-
 	return X
 }
 
 func Ifft(X []complex128) []complex128 {
 	N := len(X)
-	log2N := int(math.Log2(float64(N)))
+	log2N := log2(N)
 	x := shuffle(X)
 	for s := 1; s <= log2N; s++ {
 		m := 1 << uint(s)
@@ -76,6 +85,5 @@ func Ifft(X []complex128) []complex128 {
 	for n := 0; n < N; n++ {
 		x[n] = complex(real(x[n])/float64(N), imag(x[n])/float64(N))
 	}
-
 	return x
 }
