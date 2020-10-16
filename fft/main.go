@@ -21,9 +21,31 @@ func ReverseBits(x uint, w uint) uint {
 	return x >> (32 - w)
 }
 
+func Shuffle(out []complex128, in []complex128) {
+	if len(in) != len(out) {
+		panic("Shuffle: out and in must be the same length!")
+	}
+	N := uint(len(out))
+	w := uint(math.Log2(float64(N)))
+	if &out[0] != &in[0] {
+		for k := uint(0); k < N; k++ {
+			out[ReverseBits(k, w)] = in[k]
+		}
+	} else {
+		for a := uint(0); a < N; a++ {
+			b := ReverseBits(a, w)
+			if a < b {
+				out[a], out[b] = out[b], out[a]
+			}
+		}
+	}
+}
+
 
 func main() {
-	for i := uint(0); i < 16; i++ {
-		fmt.Printf("%02x %02x\n", i, ReverseBits(i, 4))
-	}
+	x := []complex128{1,2,3,4}
+	y := make([]complex128, 4)
+
+	Shuffle(y, x)
+	fmt.Println(y)
 }
