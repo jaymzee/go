@@ -1,13 +1,12 @@
-package main
+package morse
 
 import (
-	"github.com/jaymzee/go/raspberrypi/gpio"
 	"log"
 	"strings"
 	"time"
 )
 
-var morse = map[rune]string{
+var Code = map[rune]string{
 	'A': ".-",
 	'B': "-...",
 	'C': "-.-.",
@@ -46,29 +45,34 @@ var morse = map[rune]string{
 	'0': "-----",
 }
 
-func dit(led *gpio.LED) {
-	led.On()
+type Output interface {
+	On()
+	Off()
+}
+
+func Dit(o Output) {
+	o.On()
 	time.Sleep(100 * time.Millisecond)
-	led.Off()
+	o.Off()
 	time.Sleep(100 * time.Millisecond)
 }
 
-func dah(led *gpio.LED) {
-	led.On()
+func Dah(o Output) {
+	o.On()
 	time.Sleep(300 * time.Millisecond)
-	led.Off()
+	o.Off()
 	time.Sleep(100 * time.Millisecond)
 }
 
-func sendChar(led *gpio.LED, ch rune) {
-	if code, found := morse[ch]; found {
+func SendChar(o Output, ch rune) {
+	if code, found := Code[ch]; found {
 		log.Printf("%c %q\n", ch, code)
 		for _, sym := range code {
 			switch sym {
 			case '.':
-				dit(led)
+				Dit(o)
 			case '-':
-				dah(led)
+				Dah(o)
 			default:
 				panic("invalid character in morse code table")
 			}
@@ -78,7 +82,7 @@ func sendChar(led *gpio.LED, ch rune) {
 	// ignore characters not in morse map
 }
 
-func sendString(led *gpio.LED, msg string) {
+func Send(o Output, msg string) {
 	for _, ch := range strings.ToUpper(msg) {
 		switch ch {
 		case ' ':
@@ -88,7 +92,7 @@ func sendString(led *gpio.LED, msg string) {
 			log.Println("STOP")
 			time.Sleep(1 * time.Second)
 		default:
-			sendChar(led, ch)
+			SendChar(o, ch)
 		}
 	}
 }

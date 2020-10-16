@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/jaymzee/go/morse"
 	"github.com/jaymzee/go/raspberrypi/gpio"
 	"log"
 	"os"
@@ -25,11 +26,11 @@ func main() {
 
 	fmt.Printf("Sending morse code on gpio pin %d\n", *pinFlag)
 	for {
-		sendString(led, msg)
+		morse.Send(led, msg)
 	}
 }
 
-// CTRL-C handler
+// CTRL-C handler to turn off the LED
 func setupCtrlCHandler(led *gpio.LED) {
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt)
