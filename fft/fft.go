@@ -1,7 +1,6 @@
-package main
+package fft
 
 import (
-	"fmt"
 	"math"
 	"math/cmplx"
 )
@@ -12,11 +11,11 @@ func Twiddle(N int) complex128 {
 }
 
 func ReverseBits(x uint, w uint) uint {
-	x = (x & 0xaaaaaaaa) >> 1 | (x & 0x55555555) << 1
-	x = (x & 0xcccccccc) >> 2 | (x & 0x33333333) << 2
-	x = (x & 0xf0f0f0f0) >> 4 | (x & 0x0f0f0f0f) << 4
-	x = (x & 0xff00ff00) >> 8 | (x & 0x00ff00ff) << 8
-	x = x >> 16 | x << 16
+	x = (x&0xaaaaaaaa)>>1 | (x&0x55555555)<<1
+	x = (x&0xcccccccc)>>2 | (x&0x33333333)<<2
+	x = (x&0xf0f0f0f0)>>4 | (x&0x0f0f0f0f)<<4
+	x = (x&0xff00ff00)>>8 | (x&0x00ff00ff)<<8
+	x = x>>16 | x<<16
 
 	return x >> (32 - w)
 }
@@ -54,10 +53,10 @@ func Fft(x []complex128) {
 		for k := 0; k < N; k += m {
 			W := complex(1, 0)
 			for j := 0; j < m_2; j++ {
-				t := x[k + j]
-				u := W * x[k + j + m_2]
-				x[k + j] = t + u
-				x[k + j + m_2] = t - u
+				t := x[k+j]
+				u := W * x[k+j+m_2]
+				x[k+j] = t + u
+				x[k+j+m_2] = t - u
 				W *= W_m
 			}
 		}
@@ -77,10 +76,10 @@ func Ifft(x []complex128) {
 		for k := 0; k < N; k += m {
 			W := complex(1, 0)
 			for j := 0; j < m_2; j++ {
-				t := x[k + j]
-				u := W * x[k + j + m_2]
-				x[k + j] = t + u
-				x[k + j + m_2] = t - u
+				t := x[k+j]
+				u := W * x[k+j+m_2]
+				x[k+j] = t + u
+				x[k+j+m_2] = t - u
 				W *= W_m
 			}
 		}
@@ -89,13 +88,4 @@ func Ifft(x []complex128) {
 	for n := 0; n < N; n++ {
 		x[n] /= NN
 	}
-}
-
-func main() {
-	x := []complex128{1,2,3,4,3,2,1,0}
-
-	Fft(x)
-	fmt.Println(x)
-	Ifft(x)
-	fmt.Println(x)
 }
