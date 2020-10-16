@@ -41,36 +41,13 @@ func shuffle(x []complex128) []complex128 {
 	return y
 }
 
-func Fft(x []complex128) []complex128 {
+func fftInPlace(x []complex128, sign int) {
 	N := len(x)
 	log2N := log2(N)
-	X := shuffle(x)
 	for s := 1; s <= log2N; s++ {
 		m := 1 << uint(s)
 		m_2 := m >> 1
-		W_m := twiddle(-m)
-		for k := 0; k < N; k += m {
-			W := complex(1, 0)
-			for j := 0; j < m_2; j++ {
-				t := X[k+j]
-				u := W * X[k+j+m_2]
-				X[k+j] = t + u
-				X[k+j+m_2] = t - u
-				W *= W_m
-			}
-		}
-	}
-	return X
-}
-
-func Ifft(X []complex128) []complex128 {
-	N := len(X)
-	log2N := log2(N)
-	x := shuffle(X)
-	for s := 1; s <= log2N; s++ {
-		m := 1 << uint(s)
-		m_2 := m >> 1
-		W_m := twiddle(m)
+		W_m := twiddle(sign * m)
 		for k := 0; k < N; k += m {
 			W := complex(1, 0)
 			for j := 0; j < m_2; j++ {
@@ -82,9 +59,20 @@ func Ifft(X []complex128) []complex128 {
 			}
 		}
 	}
-	N_ := float64(N)
+}
+
+func Fft(x []complex128) []complex128 {
+	X := shuffle(x)
+	fftInPlace(X, -1)
+	return X
+}
+
+func Ifft(X []complex128) []complex128 {
+	x := shuffle(X)
+	fftInPlace(x, 1)
+	N := float64(len(x))
 	for n, v := range x {
-		x[n] = complex(real(v)/N_, imag(v)/N_)
+		x[n] = complex(real(v)/N, imag(v)/N)
 	}
 	return x
 }
