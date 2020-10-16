@@ -6,15 +6,12 @@ import (
 )
 
 func log2(x int) int {
-	y := 0
-	for {
+	for n := 0; ; n++ {
 		x >>= 1
 		if x == 0 {
-			break
+			return n
 		}
-		y++
 	}
-	return y
 }
 
 func twiddle(N int) complex128 {
