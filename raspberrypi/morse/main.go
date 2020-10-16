@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jaymzee/go/morse"
-	"github.com/jaymzee/go/raspberrypi/gpio"
+	"github.com/jaymzee/gpio0"
 	"log"
 	"os"
 	"os/signal"
@@ -20,7 +20,7 @@ func main() {
 	}
 
 	log.SetFlags(log.Ltime | log.Lmicroseconds)
-	led := gpio.NewLED(*pinFlag)
+	led := gpio0.NewLED(*pinFlag)
 	msg := strings.Join(flag.Args(), " ")
 	setupCtrlCHandler(led)
 
@@ -31,7 +31,7 @@ func main() {
 }
 
 // CTRL-C handler to turn off the LED
-func setupCtrlCHandler(led *gpio.LED) {
+func setupCtrlCHandler(led *gpio0.LED) {
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt)
 	go func() {
