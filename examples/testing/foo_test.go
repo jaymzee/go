@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAbs(t *testing.T) {
 	got := Abs(-1)
@@ -9,3 +11,8 @@ func TestAbs(t *testing.T) {
 	}
 }
 
+func BenchmarkRandInt(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Rand()
+	}
+}

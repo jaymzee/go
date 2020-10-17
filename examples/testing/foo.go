@@ -7,3 +7,7 @@ func Abs(x int) int {
 		return x
 	}
 }
+
+func Rand() int {
+	return 42
+}
