@@ -11,3 +11,4 @@ func Abs(x int) int {
 func Rand() int {
 	return 42
 }
+

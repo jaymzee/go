@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -12,7 +13,14 @@ func TestAbs(t *testing.T) {
 }
 
 func BenchmarkRandInt(b *testing.B) {
+	// initialization code here
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		Rand()
 	}
+}
+
+func ExampleHello() {
+	fmt.Println("hello")
+	// Output: Hello
 }
