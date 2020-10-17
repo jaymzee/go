@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func TestAbs(t *testing.T) {
 	got := Abs(-1)
@@ -21,6 +18,6 @@ func BenchmarkRandInt(b *testing.B) {
 }
 
 func ExampleHello() {
-	fmt.Println("Hello")
+	Hello()
 	// Output: Hello
 }
