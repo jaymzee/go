@@ -21,6 +21,6 @@ func BenchmarkRandInt(b *testing.B) {
 }
 
 func ExampleHello() {
-	fmt.Println("hello")
+	fmt.Println("Hello")
 	// Output: Hello
 }
