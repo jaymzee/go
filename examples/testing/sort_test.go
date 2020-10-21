@@ -2,29 +2,21 @@ package main
 
 import (
 	"fmt"
+	. "github.com/jaymzee/go/examples/person"
 	"sort"
 )
 
-type Person struct {
-	Name string
-	Age  int
-}
+type PeopleByAge []Person
 
-func (p *Person) String() string {
-	return fmt.Sprintf("%s: %d", p.Name, p.Age)
-}
+func (a PeopleByAge) Len() int           { return len(a) }
+func (a PeopleByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a PeopleByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
 
-type ByAge []Person
+type PeopleByName []Person
 
-func (a ByAge) Len() int           { return len(a) }
-func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
-
-type ByName []Person
-
-func (a ByName) Len() int           { return len(a) }
-func (a ByName) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByName) Less(i, j int) bool { return a[i].Name < a[j].Name }
+func (a PeopleByName) Len() int           { return len(a) }
+func (a PeopleByName) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a PeopleByName) Less(i, j int) bool { return a[i].Name < a[j].Name }
 
 func Example() {
 	people := []Person{
@@ -33,9 +25,9 @@ func Example() {
 		{"Michael", 17},
 		{"Jenny", 26},
 	}
-	sort.Sort(ByAge(people))
+	sort.Sort(PeopleByAge(people))
 	fmt.Printf("by age:   %v\n", people)
-	sort.Sort(ByName(people))
+	sort.Sort(PeopleByName(people))
 	fmt.Printf("by name:  %v\n", people)
 	// Output:
 	// by age:   [{Michael 17} {Jenny 26} {Bob 31} {John 42}]
