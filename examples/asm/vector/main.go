@@ -13,4 +13,3 @@ func main() {
 	fmt.Printf("%v\n", MultFloat32(3.14, 2.7))
 	fmt.Printf("%v\n", MultFloat64(3.14, 2.7))
 }
-
