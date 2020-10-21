@@ -8,15 +8,15 @@ import (
 
 type PeopleByAge []Person
 
-func (p PeopleByAge) Len() int           { return len(p) }
-func (p PeopleByAge) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-func (p PeopleByAge) Less(i, j int) bool { return p[i].Age < p[j].Age }
+func (a PeopleByAge) Len() int           { return len(a) }
+func (a PeopleByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a PeopleByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
 
 type PeopleByName []Person
 
-func (p PeopleByName) Len() int           { return len(p) }
-func (p PeopleByName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-func (p PeopleByName) Less(i, j int) bool { return p[i].Name < p[j].Name }
+func (a PeopleByName) Len() int           { return len(a) }
+func (a PeopleByName) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a PeopleByName) Less(i, j int) bool { return a[i].Name < a[j].Name }
 
 func main() {
 	people := []Person{
