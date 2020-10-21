@@ -2,20 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/jaymzee/go/examples/person"
 	"sort"
 )
 
-type Person struct {
-	Name string
-	Age  int
-}
-
-func (p *Person) String() string {
-	return fmt.Sprintf("%s: %d", p.Name, p.Age)
-}
-
 func main() {
-	people := []Person{
+	people := []person.Person{
 		{"Bob", 31},
 		{"John", 42},
 		{"Michael", 17},
