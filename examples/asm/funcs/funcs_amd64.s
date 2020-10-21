@@ -7,7 +7,7 @@ TEXT ·AddInt(SB),NOSPLIT,$0
 	MOVQ DX, ret+16(FP)
 	RET
 
-TEXT ·MulInt(SB),NOSPLIT,$0
+TEXT ·MultInt(SB),NOSPLIT,$0
 	MOVQ x+0(FP), AX
 	MOVQ y+8(FP), DX
 	IMULQ DX
