@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/jaymzee/go/examples/person"
+	. "github.com/jaymzee/go/examples/person"
 	"sort"
 )
 
 func main() {
-	people := []person.Person{
+	people := []Person{
 		{"Bob", 31},
 		{"John", 42},
 		{"Michael", 17},
