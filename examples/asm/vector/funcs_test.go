@@ -31,3 +31,17 @@ func TestMultFloat32(t *testing.T) {
 		t.Errorf("MultFloat32(%v, %v) = %v; want 6", a, b, got)
 	}
 }
+
+func BenchmarkMultFloat32(b *testing.B) {
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		MultFloat32(2.3, 3.4)
+	}
+}
+
+func BenchmarkMultInt(b *testing.B) {
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		MultInt(2, 3)
+	}
+}
