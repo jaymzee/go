@@ -1,4 +1,4 @@
-package main
+package testing
 
 import (
 	"fmt"
@@ -20,10 +20,10 @@ func (a PeopleByName) Less(i, j int) bool { return a[i].Name < a[j].Name }
 
 func Example() {
 	people := []Person{
-		{"Bob", 31},
-		{"John", 42},
-		{"Michael", 17},
-		{"Jenny", 26},
+		{Name: "Bob", Age: 31},
+		{Name: "John", Age: 42},
+		{Name: "Michael", Age: 17},
+		{Name: "Jenny", Age: 26},
 	}
 	sort.Sort(PeopleByAge(people))
 	fmt.Printf("by age:   %v\n", people)
