@@ -1,11 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/jaymzee/gpio0"
 	"os"
 	"time"
-	"flag"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	flag.Parse()
 	pin := *pinFlag
 	if pin < 0 {
-		fmt.Fprintln(os.Stderr, "Usage: button -p pin")
+		fmt.Fprintf(os.Stderr, "Usage: %s -p pin\n", os.Args[0])
 		os.Exit(1)
 	}
 

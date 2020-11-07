@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jaymzee/go/morse"
+	"github.com/jaymzee/morse"
 	"github.com/jaymzee/gpio0"
 	"log"
 	"os"
@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 	pin := *pinFlag
 	if pin < 0 || flag.NArg() < 1 {
-		fmt.Fprintln(os.Stderr, "Usage: morse -p pin message")
+		fmt.Fprintf(os.Stderr, "Usage: %s -p pin message\n", os.Args[0])
 		os.Exit(1)
 	}
 	message := strings.Join(flag.Args(), " ")
