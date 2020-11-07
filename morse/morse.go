@@ -6,93 +6,57 @@ import (
 	"time"
 )
 
-var Code = map[rune]string{
-	'A': ".-",
-	'B': "-...",
-	'C': "-.-.",
-	'D': "-..",
-	'E': ".",
-	'F': "..-.",
-	'G': "--.",
-	'H': "....",
-	'I': "..",
-	'J': ".---",
-	'K': "-.-",
-	'L': ".-..",
-	'M': "--",
-	'N': "-.",
-	'O': "---",
-	'P': ".--.",
-	'Q': "--.-",
-	'R': ".-.",
-	'S': "...",
-	'T': "-",
-	'U': "..-",
-	'V': "...-",
-	'W': ".--",
-	'X': "-..-",
-	'Y': "-.--",
-	'Z': "--..",
-	'1': ".----",
-	'2': "..---",
-	'3': "...--",
-	'4': "....-",
-	'5': ".....",
-	'6': "-....",
-	'7': "--...",
-	'8': "---..",
-	'9': "----.",
-	'0': "-----",
-}
+const (
+	tDit       = 100 * time.Millisecond
+	tDah       = 300 * time.Millisecond
+	tInterchar = 200 * time.Millisecond
+	tInterword = 400 * time.Millisecond
+	tStop      = 1000 * time.Millisecond
+)
 
+// Output the interface for any two state output such as led, buzzer, etc
 type Output interface {
 	On()
 	Off()
 }
 
-func Dit(o Output) {
-	o.On()
-	time.Sleep(100 * time.Millisecond)
-	o.Off()
-	time.Sleep(100 * time.Millisecond)
+// Send transmits the message on the output
+func Send(out Output, message string) {
+	for _, ch := range strings.ToUpper(message) {
+		switch ch {
+		case ' ':
+			log.Println("SPC")
+			time.Sleep(tInterword)
+		case '.':
+			log.Println("STOP")
+			time.Sleep(tStop)
+		default:
+			sendChar(out, ch)
+		}
+	}
 }
 
-func Dah(o Output) {
-	o.On()
-	time.Sleep(300 * time.Millisecond)
-	o.Off()
-	time.Sleep(100 * time.Millisecond)
+func sendSymbol(out Output, t time.Duration) {
+	out.On()
+	time.Sleep(t)
+	out.Off()
+	time.Sleep(tDit)
 }
 
-func SendChar(o Output, ch rune) {
+func sendChar(out Output, ch rune) {
 	if code, found := Code[ch]; found {
 		log.Printf("%c %q\n", ch, code)
 		for _, sym := range code {
 			switch sym {
 			case '.':
-				Dit(o)
+				sendSymbol(out, tDit)
 			case '-':
-				Dah(o)
+				sendSymbol(out, tDah)
 			default:
 				panic("invalid character in morse code table")
 			}
 		}
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(tInterchar)
 	}
-	// ignore characters not in morse map
-}
-
-func Send(o Output, msg string) {
-	for _, ch := range strings.ToUpper(msg) {
-		switch ch {
-		case ' ':
-			log.Println("SPC")
-			time.Sleep(400 * time.Millisecond)
-		case '.':
-			log.Println("STOP")
-			time.Sleep(1 * time.Second)
-		default:
-			SendChar(o, ch)
-		}
-	}
+	// characters that are not in Code are ignored
 }
