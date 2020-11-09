@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jaymzee/morse"
 	"github.com/jaymzee/gpio0"
+	"github.com/jaymzee/morse"
 	"log"
 	"os"
 	"os/signal"
@@ -22,7 +22,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage: %s -p pin message\n", os.Args[0])
 		os.Exit(1)
 	}
-	message := strings.Join(flag.Args(), " ")
+	message := strings.ToUpper(strings.Join(flag.Args(), " "))
 
 	led, err := gpio0.OpenLED(pin)
 	if err != nil {
@@ -33,7 +33,7 @@ func main() {
 
 	fmt.Printf("Sending morse code on gpio pin %d\n", pin)
 	for {
-		morse.Send(led, message)
+		morse.Send(led, []byte(message))
 	}
 }
 
