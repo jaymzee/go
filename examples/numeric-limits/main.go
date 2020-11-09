@@ -7,9 +7,10 @@ import (
 
 func main() {
 	fmt.Println("limits for integers (min, max):")
-	fmt.Printf("  uint64: (0, %d)\n", uint(math.MaxUint64))
-	fmt.Printf("   int64: (%d, %d)\n", math.MinInt64, math.MaxInt64)
-	fmt.Printf("  uint32: (0, %d)\n", math.MaxUint32)
+	fmt.Printf("  uint64: (0, %d)\n", uint64(math.MaxUint64))
+	fmt.Printf("   int64: (%d, %d)\n",
+		int64(math.MinInt64), int64(math.MaxInt64))
+	fmt.Printf("  uint32: (0, %d)\n", uint32(math.MaxUint32))
 	fmt.Printf("   int32: (%d, %d)\n", math.MinInt32, math.MaxInt32)
 	fmt.Printf("  uint16: (0, %d)\n", math.MaxUint16)
 	fmt.Printf("   int16: (%d, %d)\n", math.MinInt16, math.MaxInt16)
