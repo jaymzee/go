@@ -8,30 +8,47 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 )
 
+var pinNumber int
+
+func init() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s pin message\n", os.Args[0])
+	}
+}
+
 func main() {
+	// configure logging
 	log.SetFlags(log.Ltime | log.Lmicroseconds)
 
 	// parse flags and check usage
-	pinFlag := flag.Int("p", -1, "gpio pin number")
 	flag.Parse()
-	pin := *pinFlag
-	if pin < 0 || flag.NArg() < 1 {
-		fmt.Fprintf(os.Stderr, "Usage: %s -p pin message\n", os.Args[0])
+	args := flag.Args()
+	if len(args) < 2 {
+		flag.Usage()
 		os.Exit(1)
 	}
-	message := strings.ToUpper(strings.Join(flag.Args(), " "))
+	var err error
+	pinNumber, err = strconv.Atoi(args[0])
+	if err != nil {
+		flag.Usage()
+		os.Exit(1)
+	}
+	message := strings.ToUpper(strings.Join(args[1:], " "))
 
-	led, err := gpio0.OpenLED(pin)
+	// setup the remaining things
+	led, err := gpio0.OpenLED(pinNumber)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 	setupCtrlCHandler(led)
 
-	fmt.Printf("Sending morse code on gpio pin %d\n", pin)
+	// loop sending message forever
+	fmt.Printf("Sending morse code on gpio pin %d\n", pinNumber)
 	for {
 		morse.Send(led, []byte(message))
 	}

@@ -5,30 +5,51 @@ import (
 	"fmt"
 	"github.com/jaymzee/gpio0"
 	"os"
+	"strconv"
 	"time"
 )
 
-func main() {
-	pinFlag := flag.Int("p", -1, "gpio pin number")
-	countFlag := flag.Int("n", 4, "blink count")
+var (
+	pinNumber     int
+	blinkCount    int
+	blinkInterval time.Duration
+)
+
+func init() {
+	flag.IntVar(&blinkCount, "n", 4, "blink count")
 	intervalFlag := flag.Int("i", 1000, "blink interval (ms)")
-	flag.Parse()
-	if *pinFlag < 0 {
-		fmt.Fprintf(os.Stderr, "Usage: %s -p pin [options]\n", os.Args[0])
+	blinkInterval = time.Duration(*intervalFlag) * time.Millisecond
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s pin [options]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "options:\n")
 		flag.PrintDefaults()
+	}
+}
+
+func main() {
+	// parse program arguments
+	flag.Parse()
+	args := flag.Args()
+	if len(args) != 1 {
+		flag.Usage()
 		os.Exit(1)
 	}
-	interval := time.Duration(*intervalFlag) * time.Millisecond
+	var err error
+	pinNumber, err = strconv.Atoi(args[0])
+	if err != nil {
+		flag.Usage()
+		os.Exit(1)
+	}
 
-	led, err := gpio0.OpenLED(*pinFlag)
+	led, err := gpio0.OpenLED(pinNumber)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	for i := 0; i < *countFlag; i++ {
+	for i := 0; i < blinkCount; i++ {
 		led.On()
-		time.Sleep(interval / 2)
+		time.Sleep(blinkInterval / 2)
 		led.Off()
-		time.Sleep(interval / 2)
+		time.Sleep(blinkInterval / 2)
 	}
 }
