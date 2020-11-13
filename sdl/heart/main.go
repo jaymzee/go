@@ -6,28 +6,29 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"math"
+	"os"
 )
 
 const (
 	// Width of window
-	Width   = 1000
+	Width = 1000
 	// Height of window
-	Height  = 1000
+	Height = 1000
 	// CenterX is the center of screen (horizontal)
 	CenterX = Width / 2
 	// CenterY is the center of screen (vertical)
 	CenterY = Height / 2
 	// Radius is the radius of the circle of points
-	Radius  = 450
+	Radius = 450
 	// FPS is frames per second
-	FPS     = 1000
+	FPS = 1000
 	// Points is the total number of points
-	Points  = 500
+	Points = 500
 )
 
 // Colors
 var (
-	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 0}
+	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 128}
 )
 
 // Fonts
@@ -45,32 +46,38 @@ func main() {
 	}
 
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "SDL Init: %s", err)
+		os.Exit(1)
 	}
 	defer sdl.Quit()
 	if err := ttf.Init(); err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "TTF Init: %s", err)
+		os.Exit(1)
 	}
 
 	window, err := sdl.CreateWindow("Heart",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		Width, Height, sdl.WINDOW_SHOWN)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Create window: %s", err)
+		os.Exit(1)
 	}
 	defer window.Destroy()
 	renderer, err := sdl.CreateRenderer(window, -1, rendererFlags)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Create renderer: %s", err)
+		os.Exit(1)
 	}
 	defer renderer.Destroy()
 	Sans18, err = ttf.OpenFont("DejaVuSans.ttf", 18)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Open font: %s", err)
+		os.Exit(1)
 	}
 
 	// rendering loop
 	factor := 1.0
+	DrawInit(renderer)
 	for running := true; running; {
 		DrawFrame(renderer, factor)
 		renderer.Present()
@@ -87,10 +94,15 @@ func main() {
 	}
 }
 
+func DrawInit(renderer *sdl.Renderer) {
+	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+}
+
+// DrawFrame draws a single frame
 func DrawFrame(renderer *sdl.Renderer, factor float64) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
-	renderer.SetDrawColor(0, 255, 0, 255)
+	renderer.SetDrawColor(0, 255, 0, 64)
 	var x1, y1, x2, y2 float64
 	for n := 0; n < Points; n++ {
 		n1 := float64(n)
@@ -108,7 +120,7 @@ func DrawFrame(renderer *sdl.Renderer, factor float64) {
 	}
 
 	factorText := fmt.Sprintf("factor: %6.3f", factor)
-	DrawText(renderer, factorText, 10, 10, Sans18, Yellow)
+	DrawText(renderer, factorText, 200, 200, Sans18, Yellow)
 }
 
 // DrawText renders a string to screen coordinates x and y in the
@@ -132,5 +144,6 @@ func DrawText(renderer *sdl.Renderer, text string, x int32, y int32, font *ttf.F
 		panic(err)
 	}
 	rect := &sdl.Rect{X: x, Y: y, W: w, H: h}
+	texture.SetAlphaMod(color.A);
 	renderer.Copy(texture, nil, rect)
 }
