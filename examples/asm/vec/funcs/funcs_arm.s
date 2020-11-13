@@ -15,8 +15,8 @@ TEXT ·MultInt(SB),NOSPLIT,$0
 	MOVW	y+4(FP), R2
 	MUL	R2, R1, R0
 	EOR	R1, R1, R1	// cheating by clearing the upper 32 bits
-	MOVW	R0, ret+8(FP)
-	MOVW	R1, ret+12(FP)
+	MOVW	R0, lo+8(FP)
+	MOVW	R1, hi+12(FP)
 	RET
 
 TEXT ·MultFloat32(SB),NOSPLIT,$0

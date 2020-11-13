@@ -6,7 +6,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"math"
-	"os"
 )
 
 const (
@@ -14,9 +13,9 @@ const (
 	Width = 1000
 	// Height of window
 	Height = 1000
-	// CenterX is the center of screen (horizontal)
+	// CenterX horizontal center
 	CenterX = Width / 2
-	// CenterY is the center of screen (vertical)
+	// CenterY vertical center
 	CenterY = Height / 2
 	// Radius is the radius of the circle of points
 	Radius = 450
@@ -31,82 +30,30 @@ var (
 	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 128}
 )
 
-// Fonts
-var (
+// Scene holds the state for our scene
+type Scene struct {
+	Factor float64
 	Sans18 *ttf.Font
-)
+}
 
-func main() {
-	// process program arguments
-	rendererFlags := uint32(sdl.RENDERER_ACCELERATED)
-	sFlag := flag.Bool("s", false, "use software rendering")
-	flag.Parse()
-	if *sFlag {
-		rendererFlags = uint32(sdl.RENDERER_SOFTWARE)
-	}
-
-	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		fmt.Fprintf(os.Stderr, "SDL Init: %s", err)
-		os.Exit(1)
-	}
-	defer sdl.Quit()
-	if err := ttf.Init(); err != nil {
-		fmt.Fprintf(os.Stderr, "TTF Init: %s", err)
-		os.Exit(1)
-	}
-
-	window, err := sdl.CreateWindow("Heart",
-		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		Width, Height, sdl.WINDOW_SHOWN)
+// Init initializes the scene
+func (scene *Scene) Init(renderer *sdl.Renderer) {
+	scene.Factor = 1.0
+	err := renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Create window: %s", err)
-		os.Exit(1)
-	}
-	defer window.Destroy()
-	renderer, err := sdl.CreateRenderer(window, -1, rendererFlags)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Create renderer: %s", err)
-		os.Exit(1)
-	}
-	defer renderer.Destroy()
-	Sans18, err = ttf.OpenFont("DejaVuSans.ttf", 18)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Open font: %s", err)
-		os.Exit(1)
-	}
-
-	// rendering loop
-	factor := 1.0
-	DrawInit(renderer)
-	for running := true; running; {
-		DrawFrame(renderer, factor)
-		renderer.Present()
-		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
-		factor += 0.001
-
-		if event := sdl.PollEvent(); event != nil {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				println("Quit")
-				running = false
-			}
-		}
+		panic(err)
 	}
 }
 
-func DrawInit(renderer *sdl.Renderer) {
-	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
-}
-
-// DrawFrame draws a single frame
-func DrawFrame(renderer *sdl.Renderer, factor float64) {
+// Draw draws a single frame of the scene
+func (scene *Scene) Draw(renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
 	renderer.SetDrawColor(0, 255, 0, 64)
 	var x1, y1, x2, y2 float64
 	for n := 0; n < Points; n++ {
 		n1 := float64(n)
-		n2 := factor * n1
+		n2 := scene.Factor * n1
 		theta := 2 * math.Pi * n1 / Points
 		phi := 2 * math.Pi * n2 / Points
 		x1 = Radius * math.Cos(theta)
@@ -119,22 +66,79 @@ func DrawFrame(renderer *sdl.Renderer, factor float64) {
 		)
 	}
 
-	factorText := fmt.Sprintf("factor: %6.3f", factor)
-	DrawText(renderer, factorText, 200, 200, Sans18, Yellow)
+	factor := fmt.Sprintf("factor: %6.3f", scene.Factor)
+	DrawText(renderer, factor, 200, 200, scene.Sans18, Yellow)
+	scene.Factor += 0.001
 }
 
-// DrawText renders a string to screen coordinates x and y in the
-// font and color given.  It is a convenience method that
-//   - creates surface
-//   - a texture from that surface
-//   - renders the texture
-func DrawText(renderer *sdl.Renderer, text string, x int32, y int32, font *ttf.Font, color sdl.Color) {
-	surface, err := font.RenderUTF8Blended(text, color)
+func main() {
+	// process program arguments
+	rendererFlags := uint32(sdl.RENDERER_ACCELERATED)
+	sFlag := flag.Bool("s", false, "use software rendering")
+	flag.Parse()
+	if *sFlag {
+		rendererFlags = uint32(sdl.RENDERER_SOFTWARE)
+	}
+
+	// initialize SDL
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
+	}
+	defer sdl.Quit()
+	if err := ttf.Init(); err != nil {
+		panic(err)
+	}
+	window, err := sdl.CreateWindow("Heart",
+		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
+		Width, Height, sdl.WINDOW_SHOWN)
+	if err != nil {
+		panic(err)
+	}
+	defer window.Destroy()
+	renderer, err := sdl.CreateRenderer(window, -1, rendererFlags)
+	if err != nil {
+		panic(err)
+	}
+	defer renderer.Destroy()
+
+	// load fonts
+	dejaVuSans18, err := ttf.OpenFont("DejaVuSans.ttf", 18)
+	if err != nil {
+		panic(err)
+	}
+
+
+	// init scene
+	scene := Scene{Sans18: dejaVuSans18}
+	scene.Init(renderer)
+	// scenee render loop
+	for running := true; running; {
+		scene.Draw(renderer)
+		renderer.Present()
+		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
+
+		if event := sdl.PollEvent(); event != nil {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				println("Quit")
+				running = false
+			}
+		}
+	}
+}
+
+// DrawText renders a string to screen coordinates x and y in the font and
+// color given.  It is a convenience function that:
+//   - creates a surface from the string
+//   - creates a texture from that surface
+//   - copies the texture to the renderer
+func DrawText(r *sdl.Renderer, s string, x, y int32, f *ttf.Font, c sdl.Color) {
+	surface, err := f.RenderUTF8Blended(s, c)
 	if err != nil {
 		panic(err)
 	}
 	defer surface.Free()
-	texture, err := renderer.CreateTextureFromSurface(surface)
+	texture, err := r.CreateTextureFromSurface(surface)
 	if err != nil {
 		panic(err)
 	}
@@ -144,6 +148,12 @@ func DrawText(renderer *sdl.Renderer, text string, x int32, y int32, font *ttf.F
 		panic(err)
 	}
 	rect := &sdl.Rect{X: x, Y: y, W: w, H: h}
-	texture.SetAlphaMod(color.A);
-	renderer.Copy(texture, nil, rect)
+	err = texture.SetAlphaMod(c.A)
+	if err != nil {
+		panic(err)
+	}
+	err = r.Copy(texture, nil, rect)
+	if err != nil {
+		panic(err)
+	}
 }
