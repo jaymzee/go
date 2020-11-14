@@ -18,7 +18,7 @@ const (
 
 // Colors
 var (
-	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 128}
+	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 )
 
 // Scene contains the state for the scene
@@ -66,18 +66,20 @@ func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 	}
 
 	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
-	DrawText(renderer, factor, 200, 200, scene.sans18, Yellow)
+	DrawText(renderer, factor, 20, 20, scene.sans18, Yellow)
 }
 
 // Loop is the event loop for the scene
 func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 	for running := true; running; {
 		// respond to events
-		if event := sdl.PollEvent(); event != nil {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
 				fmt.Println("Quit")
 				running = false
+			default:
+				fmt.Printf("%T %#v\n", event, event)
 			}
 		}
 

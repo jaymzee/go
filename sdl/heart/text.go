@@ -26,8 +26,11 @@ func DrawText(r *sdl.Renderer, s string, x, y int32, f *ttf.Font, c sdl.Color) {
 		panic(err)
 	}
 	rect := &sdl.Rect{X: x, Y: y, W: w, H: h}
-	if err = texture.SetAlphaMod(c.A); err != nil {
-		panic(err)
+	if c.A < 255 {
+		err := texture.SetAlphaMod(c.A);
+		if err != nil {
+			panic(err)
+		}
 	}
 	if err = r.Copy(texture, nil, rect); err != nil {
 		panic(err)
