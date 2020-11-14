@@ -38,7 +38,7 @@ func main() {
 	defer renderer.Destroy()
 
 	// init scene
-	scene := new(Heart)
+	var scene Scene = new(Heart)
 	scene.Init(window, renderer)
 	// scene render loop
 	for running := true; running; {
