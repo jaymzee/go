@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"math"
@@ -18,6 +19,7 @@ const (
 
 // Colors
 var (
+	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 64}
 	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 )
 
@@ -47,7 +49,6 @@ func (scene *Scene) Init(window *sdl.Window, renderer *sdl.Renderer) {
 func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
-	renderer.SetDrawColor(0, 255, 0, 64)
 	var x1, y1, x2, y2 float64
 	cx, cy := float64(ScreenWidth/2), float64(ScreenHeight/2)
 	for n := 0; n < scene.points; n++ {
@@ -59,14 +60,14 @@ func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 		y1 = scene.radius * math.Sin(theta)
 		x2 = scene.radius * math.Cos(phi)
 		y2 = scene.radius * math.Sin(phi)
-		renderer.DrawLine(
+		gfx.LineColor(renderer,
 			int32(cx-x1), int32(cy-y1),
-			int32(cx-x2), int32(cy-y2),
-		)
+			int32(cx-x2), int32(cy-y2), Green)
 	}
 
 	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
-	DrawText(renderer, 20, 20, factor, scene.sans18, Yellow)
+	gfx.StringColor(renderer, 20, 20, factor, Yellow)
+	//DrawText(renderer, 20, 20, factor, scene.sans18, Yellow)
 }
 
 // Loop is the event loop for the scene
