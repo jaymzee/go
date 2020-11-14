@@ -58,5 +58,6 @@ func main() {
 	defer renderer.Destroy()
 
 	scene := new(Scene)
+	scene.Init(window, renderer)
 	scene.Loop(window, renderer)
 }

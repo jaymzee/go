@@ -72,7 +72,6 @@ func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 
 // Loop is the event loop for the scene
 func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
-	scene.Init(window, renderer)
 	for running := true; running; {
 		scene.Draw(window, renderer)
 		renderer.Present()
