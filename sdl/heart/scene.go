@@ -67,16 +67,12 @@ func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 
 	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
 	DrawText(renderer, factor, 200, 200, scene.sans18, Yellow)
-	scene.factor += 0.001
 }
 
 // Loop is the event loop for the scene
 func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 	for running := true; running; {
-		scene.Draw(window, renderer)
-		renderer.Present()
-		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
-
+		// respond to events
 		if event := sdl.PollEvent(); event != nil {
 			switch event.(type) {
 			case *sdl.QuitEvent:
@@ -84,5 +80,13 @@ func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 				running = false
 			}
 		}
+
+		// draw a single frame of the scene
+		scene.Draw(window, renderer)
+		renderer.Present()
+		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
+
+		// update scene
+		scene.factor += 0.001
 	}
 }
