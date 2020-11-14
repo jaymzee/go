@@ -23,19 +23,19 @@ var (
 
 // Scene contains the state for the scene
 type Scene struct {
-	Points int
-	Factor float64
-	Radius float64
-	Sans18 *ttf.Font
+	points int
+	factor float64
+	radius float64
+	sans18 *ttf.Font
 }
 
 // Init initializes the scene
 func (scene *Scene) Init(window *sdl.Window, renderer *sdl.Renderer) {
 	var err error
-	scene.Factor = 1.0
-	scene.Points = 500
-	scene.Radius = 450
-	scene.Sans18, err = ttf.OpenFont("DejaVuSans.ttf", 18)
+	scene.factor = 1.0
+	scene.points = 500
+	scene.radius = 450
+	scene.sans18, err = ttf.OpenFont("DejaVuSans.ttf", 18)
 	if err != nil {
 		panic(err)
 	}
@@ -50,24 +50,24 @@ func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 255, 0, 64)
 	var x1, y1, x2, y2 float64
 	cx, cy := float64(ScreenWidth/2), float64(ScreenHeight/2)
-	for n := 0; n < scene.Points; n++ {
+	for n := 0; n < scene.points; n++ {
 		n1 := float64(n)
-		n2 := scene.Factor * n1
-		theta := 2 * math.Pi * n1 / float64(scene.Points)
-		phi := 2 * math.Pi * n2 / float64(scene.Points)
-		x1 = scene.Radius * math.Cos(theta)
-		y1 = scene.Radius * math.Sin(theta)
-		x2 = scene.Radius * math.Cos(phi)
-		y2 = scene.Radius * math.Sin(phi)
+		n2 := scene.factor * n1
+		theta := 2 * math.Pi * n1 / float64(scene.points)
+		phi := 2 * math.Pi * n2 / float64(scene.points)
+		x1 = scene.radius * math.Cos(theta)
+		y1 = scene.radius * math.Sin(theta)
+		x2 = scene.radius * math.Cos(phi)
+		y2 = scene.radius * math.Sin(phi)
 		renderer.DrawLine(
 			int32(cx-x1), int32(cy-y1),
 			int32(cx-x2), int32(cy-y2),
 		)
 	}
 
-	factor := fmt.Sprintf("factor: %6.3f", scene.Factor)
-	DrawText(renderer, factor, 200, 200, scene.Sans18, Yellow)
-	scene.Factor += 0.001
+	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
+	DrawText(renderer, factor, 200, 200, scene.sans18, Yellow)
+	scene.factor += 0.001
 }
 
 // Loop is the event loop for the scene
