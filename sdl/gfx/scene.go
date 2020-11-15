@@ -19,6 +19,7 @@ const (
 
 // Colors
 var (
+	Red  = sdl.Color{R: 255, G: 0, B: 0, A: 255}
 	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 64}
 	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 )
@@ -29,24 +30,50 @@ type Scene struct {
 	factor float64
 	radius float64
 	sans18 *ttf.Font
+	fpsmgr gfx.FPSmanager
 }
 
-// Init initializes the scene
-func (scene *Scene) Init(window *sdl.Window, renderer *sdl.Renderer) {
-	var err error
+// Loop is the event loop for the scene
+func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
+	scene.init(window, renderer)
+	for running := true; running; {
+		// respond to events
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				fmt.Println("Quit")
+				running = false
+			default:
+				fmt.Printf("%T %#v\n", event, event)
+			}
+		}
+
+		// draw a single frame of the scene
+		scene.draw(window, renderer)
+		renderer.Present()
+		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
+
+		// update scene
+		scene.factor += 0.001
+	}
+}
+
+// NewScene initializes the scene
+func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	scene.factor = 1.0
 	scene.points = 500
 	scene.radius = 450
-	scene.sans18, err = ttf.OpenFont("DejaVuSans.ttf", 18)
-	if err != nil {
+	if font, err := ttf.OpenFont("DejaVuSans.ttf", 18); err != nil {
 		panic(err)
+	} else {
+		scene.sans18 = font
 	}
 	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
 	window.SetTitle("Scene")
 }
 
 // Draw draws a single frame of the scene
-func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
+func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
 	var x1, y1, x2, y2 float64
@@ -65,31 +92,10 @@ func (scene *Scene) Draw(window *sdl.Window, renderer *sdl.Renderer) {
 			int32(cx-x2), int32(cy-y2), Green)
 	}
 
+	gfx.CircleColor(renderer, 200, 100, 25, Green)
+	gfx.RectangleColor(renderer, 100, 100, 200, 50, Red)
+
 	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
 	gfx.StringColor(renderer, 20, 20, factor, Yellow)
 	//DrawText(renderer, 20, 20, factor, scene.sans18, Yellow)
-}
-
-// Loop is the event loop for the scene
-func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
-	for running := true; running; {
-		// respond to events
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				fmt.Println("Quit")
-				running = false
-			default:
-				fmt.Printf("%T %#v\n", event, event)
-			}
-		}
-
-		// draw a single frame of the scene
-		scene.Draw(window, renderer)
-		renderer.Present()
-		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
-
-		// update scene
-		scene.factor += 0.001
-	}
 }
