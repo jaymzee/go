@@ -5,15 +5,14 @@ TEXT ·AddInt(SB),NOSPLIT,$0
 	MOVQ	y+8(FP), DX
 	ADDQ	AX, DX
 	MOVQ	DX, ret+16(FP)
-	MOVQ	DX, ret+16(FP)
 	RET
 
 TEXT ·MultInt(SB),NOSPLIT,$0
 	MOVQ	x+0(FP), AX
 	MOVQ	y+8(FP), DX
 	IMULQ	DX
-	MOVQ	AX, ret+16(FP)
-	MOVQ	DX, ret+24(FP)
+	MOVQ	AX, lo+16(FP)
+	MOVQ	DX, hi+24(FP)
 	RET
 
 TEXT ·MultFloat32(SB),NOSPLIT,$0
