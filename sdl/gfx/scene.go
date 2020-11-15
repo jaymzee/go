@@ -14,7 +14,7 @@ const (
 	// ScreenHeight of window
 	ScreenHeight = 1000
 	// FPS is frames per second
-	FPS = 1000
+	FPS = 200
 )
 
 // Colors
@@ -30,12 +30,14 @@ type Scene struct {
 	factor float64
 	radius float64
 	sans18 *ttf.Font
-	fpsmgr gfx.FPSmanager
 }
 
 // Loop is the event loop for the scene
 func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 	scene.init(window, renderer)
+	fpsmgr := new(gfx.FPSmanager)
+	gfx.InitFramerate(fpsmgr)
+	gfx.SetFramerate(fpsmgr, FPS)
 	for running := true; running; {
 		// respond to events
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -51,7 +53,7 @@ func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 		// draw a single frame of the scene
 		scene.draw(window, renderer)
 		renderer.Present()
-		sdl.Delay(uint32(math.Round(1000.0 / FPS)))
+		gfx.FramerateDelay(fpsmgr)
 
 		// update scene
 		scene.factor += 0.001
@@ -97,5 +99,4 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 
 	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
 	gfx.StringColor(renderer, 20, 20, factor, Yellow)
-	//DrawText(renderer, 20, 20, factor, scene.sans18, Yellow)
 }
