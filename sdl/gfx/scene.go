@@ -19,8 +19,9 @@ const (
 
 // Colors
 var (
-	Red  = sdl.Color{R: 255, G: 0, B: 0, A: 255}
+	Red  = sdl.Color{R: 255, G: 0, B: 0, A: 128}
 	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 64}
+	Blue  = sdl.Color{R: 0, G: 0, B: 255, A: 64}
 	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 )
 
@@ -71,7 +72,7 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 		scene.sans18 = font
 	}
 	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
-	window.SetTitle("Scene")
+	window.SetTitle("gfx")
 }
 
 // Draw draws a single frame of the scene
@@ -96,6 +97,13 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 
 	gfx.CircleColor(renderer, 200, 100, 25, Green)
 	gfx.RectangleColor(renderer, 100, 100, 200, 50, Red)
+	gfx.RoundedBoxColor(renderer, 300, 200, 350, 220, 4, Blue)
+	vx := []int16{100, 150, 125}
+	vy := []int16{200, 200, 250}
+	gfx.FilledPolygonColor(renderer, vx, vy, Red)
+	ux := []int16{200, 280, 320}
+	uy := []int16{200, 300, 500}
+	gfx.BezierColor(renderer, ux, uy, 3, Yellow)
 
 	factor := fmt.Sprintf("factor: %6.3f", scene.factor)
 	gfx.StringColor(renderer, 20, 20, factor, Yellow)
