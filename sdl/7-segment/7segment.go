@@ -48,7 +48,7 @@ func DrawSevenSegment(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
 // EncodeSevenSegment encodes a digit for a seven-segment display
 // the digit may be hexadecimal, decimal, or octal
 func EncodeSevenSegment(digit int, point bool) uint8 {
-	var code uint8
+	code := SevenSegment.Encode[16]
 	if digit >= 0 && digit < 16 {
 		code = SevenSegment.Encode[digit]
 	}
@@ -60,21 +60,22 @@ func EncodeSevenSegment(digit int, point bool) uint8 {
 
 // SevenSegment is the config for drawing and encoding seven-segment displays
 var SevenSegment = struct {
-	Encode     [16]uint8
+	Encode     [17]uint8
 	Outline    sdl.Rect
-	X         [7][6]int16
-	Y         [7][6]int16
+	X          [7][6]int16
+	Y          [7][6]int16
 	Dot        sdl.Point
 	DotR       int32
 	Background sdl.Color
 	Border     sdl.Color
 	LedOff     sdl.Color
 }{
-	Encode: [16]uint8{
+	Encode: [17]uint8{
 		0077, 0006, 0133, 0117, // 0, 1, 2, 3
 		0146, 0155, 0175, 0007, // 4, 5, 6, 7
 		0177, 0157, 0167, 0174, // 8, 9, A, b
 		0071, 0136, 0171, 0161, // C, d, E, F
+		0120, // r (error)
 	},
 	Outline: sdl.Rect{X: 0, Y: 0, W: 50, H: 75},
 	X: [7][6]int16{
