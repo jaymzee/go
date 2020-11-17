@@ -18,6 +18,7 @@ const (
 var (
 	Black  = sdl.Color{R: 0, G: 0, B: 0, A: 255}
 	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 255}
+	Red    = sdl.Color{R: 255, G: 0, B: 0, A: 255}
 	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 )
 
@@ -39,7 +40,7 @@ func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 				fmt.Println("Quit")
 				running = false
 			default:
-				fmt.Printf("%T %#v\n", event, event)
+				//fmt.Printf("%T %#v\n", event, event)
 			}
 		}
 
@@ -65,6 +66,7 @@ func bar(ch chan int) {
 
 // NewScene initializes the scene
 func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
+	SevenSegment.Border = SevenSegment.Background
 	if font, err := ttf.OpenFont("DejaVuSans.ttf", 18); err != nil {
 		panic(err)
 	} else {
@@ -83,14 +85,14 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	select {
 	case number := <-scene.ch1:
-		renderer.SetDrawColor(0,0,0,0)
-		renderer.FillRect(&sdl.Rect{20, 20, 200, 23})
-		numtxt := fmt.Sprintf("number1: %d", number)
-		DrawText(renderer, 20, 20, numtxt, scene.sans18, Yellow)
+		b0 := EncodeSevenSegment(number & 0xF, false)
+		b1 := EncodeSevenSegment(number >> 4 & 0xF, false)
+		DrawSevenSegment(renderer, 150, 100, b0, Green)
+		DrawSevenSegment(renderer, 100, 100, b1, Green)
 	case number := <-scene.ch2:
-		renderer.SetDrawColor(0,0,0,0)
-		renderer.FillRect(&sdl.Rect{20, 40, 200, 23})
-		numtxt := fmt.Sprintf("number2: %d", number)
-		DrawText(renderer, 20, 40, numtxt, scene.sans18, Yellow)
+		b0 := EncodeSevenSegment(number & 0xF, false)
+		b1 := EncodeSevenSegment(number >> 4 & 0xF, false)
+		DrawSevenSegment(renderer, 150, 200, b0, Red)
+		DrawSevenSegment(renderer, 100, 200, b1, Red)
 	}
 }
