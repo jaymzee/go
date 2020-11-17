@@ -9,9 +9,9 @@ import (
 
 const (
 	// ScreenWidth of window
-	ScreenWidth = 1000
+	ScreenWidth = 400
 	// ScreenHeight of window
-	ScreenHeight = 1000
+	ScreenHeight = 300
 	// FPS is frames per second
 	FPS = 4
 )
@@ -26,7 +26,7 @@ var (
 // Scene contains the state for the scene
 type Scene struct {
 	counter int
-	sans18 *ttf.Font
+	sans18  *ttf.Font
 }
 
 // Loop is the event loop for the scene
@@ -65,7 +65,7 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.sans18 = font
 	}
-	window.SetTitle("7-segment display")
+	window.SetTitle("seven-segment display")
 }
 
 // Draw draws a single frame of the scene
@@ -73,8 +73,8 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
 
-	code := Encode7segment(scene.counter & 0xF, false)
-	Draw7segment(renderer, 100, 100, code, Green)
+	code := EncodeSevenSegment(scene.counter&0xF, false)
+	DrawSevenSegment(renderer, 100, 100, code, Green)
 
 	counterText := fmt.Sprintf("counter: %#x", scene.counter)
 	DrawText(renderer, 20, 20, counterText, scene.sans18, Yellow)
