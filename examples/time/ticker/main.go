@@ -14,16 +14,18 @@ func main() {
 		for {
 			select {
 			case <-done:
+				fmt.Println("done")
 				return
 			case t := <-ticker.C:
-				fmt.Println("Tick at", t)
+				fmt.Println("tick at:", t)
 			}
 		}
 	}()
 
 	time.Sleep(2600 * time.Millisecond)
 	ticker.Stop()
-	done <- true
+	done <- true // prevents leaked goroutine
 	fmt.Println("Ticker stopped")
+	time.Sleep(1000 * time.Millisecond)
+	fmt.Println("finished")
 }
-
