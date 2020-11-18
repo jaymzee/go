@@ -1,6 +1,7 @@
 package seg7
 
 import (
+	"errors"
 	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -11,7 +12,7 @@ import (
 //  y is the y coordinate of the upper left corner
 //  b drives the A,B,C,D,E,F,G leds (bit-0..bit-6 -> A..G, bit-7 -> dot)
 //  c is the color of the on state of the leds
-func Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
+func Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) error {
 	// calculate new viewport
 	vp := Default.Outline
 	vp.X = x
@@ -19,16 +20,24 @@ func Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
 
 	// fill shape with background color (erase it)
 	bg := Default.Background
-	rend.SetDrawColor(bg.R, bg.G, bg.B, bg.A)
-	rend.FillRect(&vp)
+	if err := rend.SetDrawColor(bg.R, bg.G, bg.B, bg.A); err != nil {
+		return err
+	}
+	if err := rend.FillRect(&vp); err != nil {
+		return err
+	}
 
 	// save the current viewport and set to the new one
 	vpsave := rend.GetViewport()
 	defer rend.SetViewport(&vpsave)
-	rend.SetViewport(&vp)
+	if err := rend.SetViewport(&vp); err != nil {
+		return err
+	}
 
 	// draw border
-	gfx.RectangleColor(rend, 0, 0, vp.W, vp.H, Default.Border)
+	if !gfx.RectangleColor(rend, 0, 0, vp.W, vp.H, Default.Border) {
+		return errors.New("draw seven-segment border failed")
+	}
 
 	// draw leds
 	d := &Default
@@ -38,11 +47,17 @@ func Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
 			led = c
 		}
 		if i < 7 {
-			gfx.FilledPolygonColor(rend, d.X[i][:], d.Y[i][:], led)
+			if !gfx.FilledPolygonColor(rend, d.X[i][:], d.Y[i][:], led) {
+				return errors.New("draw seven-segment led failed")
+			}
 		} else {
-			gfx.FilledCircleColor(rend, d.Dot.X, d.Dot.Y, d.DotR, led)
+			if !gfx.FilledCircleColor(rend, d.Dot.X, d.Dot.Y, d.DotR, led) {
+				return errors.New("draw seven-segment led failed")
+			}
 		}
 	}
+
+	return nil
 }
 
 // Encode encodes a digit for a seven-segment display

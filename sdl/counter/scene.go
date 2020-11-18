@@ -19,9 +19,9 @@ const (
 
 // Colors
 var (
-	Red    = sdl.Color{R: 255, G: 0, B: 0, A: 255}
-	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 255}
-	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
+	Red    = sdl.Color{R: 0xFF, G: 0x00, B: 0x00, A: 0xFF}
+	Green  = sdl.Color{R: 0x00, G: 0xFF, B: 0x00, A: 0xFF}
+	Yellow = sdl.Color{R: 0xFF, G: 0xFF, B: 0x00, A: 0xFF}
 )
 
 // Scene contains the state for the scene
@@ -76,11 +76,13 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.Clear()
 
 	code := seg7.Encode(scene.counter&0xF, false)
-	seg7.Draw(renderer, 100, 100, code, Green)
+	if err := seg7.Draw(renderer, 100, 100, code, Green); err != nil {
+		panic(err)
+	}
 
 	counterText := fmt.Sprintf("counter: %#x", scene.counter)
 	DrawText(renderer, 20, 20, counterText, scene.sans18, Yellow)
-	codeText := fmt.Sprintf("encoded: %#02x", code)
+	codeText := fmt.Sprintf("encoded: %08b", code)
 	DrawText(renderer, 20, 40, codeText, scene.sans18, Yellow)
 }
 
