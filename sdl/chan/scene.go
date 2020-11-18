@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/jaymzee/go/sdl/seg7"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"time"
@@ -16,9 +17,8 @@ const (
 
 // Colors
 var (
-	Black  = sdl.Color{R: 0, G: 0, B: 0, A: 255}
-	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 255}
 	Red    = sdl.Color{R: 255, G: 0, B: 0, A: 255}
+	Green  = sdl.Color{R: 0, G: 255, B: 0, A: 255}
 	Yellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 )
 
@@ -60,23 +60,23 @@ func foo(ch chan int) {
 func bar(ch chan int) {
 	for i := 0; ; i++ {
 		ch <- i
-		time.Sleep(300 * time.Millisecond)
+		time.Sleep(16666 * time.Microsecond)
 	}
 }
 
 // NewScene initializes the scene
 func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
-	SevenSegment.Border = SevenSegment.Background
 	if font, err := ttf.OpenFont("DejaVuSans.ttf", 18); err != nil {
 		panic(err)
 	} else {
 		scene.sans18 = font
 	}
+
 	window.SetTitle("chan")
+	seg7.Default.Border = seg7.Default.Background
 
 	scene.ch1 = make(chan int)
 	go foo(scene.ch1)
-
 	scene.ch2 = make(chan int)
 	go bar(scene.ch2)
 }
@@ -85,14 +85,14 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	select {
 	case number := <-scene.ch1:
-		b0 := EncodeSevenSegment(number & 0xF, false)
-		b1 := EncodeSevenSegment(number >> 4 & 0xF, false)
-		DrawSevenSegment(renderer, 150, 100, b0, Green)
-		DrawSevenSegment(renderer, 100, 100, b1, Green)
+		for i := 0; i < 4; i++ {
+			b := seg7.Encode(number>>(4*i)&0xF, false)
+			seg7.Draw(renderer, int32(250-50*i), 100, b, Green)
+		}
 	case number := <-scene.ch2:
-		b0 := EncodeSevenSegment(number & 0xF, false)
-		b1 := EncodeSevenSegment(number >> 4 & 0xF, false)
-		DrawSevenSegment(renderer, 150, 200, b0, Red)
-		DrawSevenSegment(renderer, 100, 200, b1, Red)
+		for i := 0; i < 4; i++ {
+			b := seg7.Encode(number>>(4*i)&0xF, false)
+			seg7.Draw(renderer, int32(250-50*i), 200, b, Red)
+		}
 	}
 }

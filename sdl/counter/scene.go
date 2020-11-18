@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/jaymzee/go/sdl/seg7"
 	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
@@ -66,6 +67,7 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 		scene.sans18 = font
 	}
 	window.SetTitle("seven-segment display")
+	// seg7.Default.Border = seg7.Default.Background
 }
 
 // Draw draws a single frame of the scene
@@ -73,8 +75,8 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
 
-	code := EncodeSevenSegment(scene.counter&0xF, false)
-	DrawSevenSegment(renderer, 100, 100, code, Green)
+	code := seg7.Encode(scene.counter&0xF, false)
+	seg7.Draw(renderer, 100, 100, code, Green)
 
 	counterText := fmt.Sprintf("counter: %#x", scene.counter)
 	DrawText(renderer, 20, 20, counterText, scene.sans18, Yellow)

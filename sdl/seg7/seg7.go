@@ -1,25 +1,24 @@
-package main
+package seg7
 
 import (
 	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-//DrawSevenSegment draws a seven-segment display on the screen
+//Draw draws a seven-segment display on the screen
 //  renderer is the renderer to draw on
 //  x is the x coordinate of the upper left corner
 //  y is the y coordinate of the upper left corner
 //  b drives the A,B,C,D,E,F,G leds (bit-0..bit-6 -> A..G, bit-7 -> dot)
 //  c is the color of the on state of the leds
-func DrawSevenSegment(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
-	ss := SevenSegment
+func Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
 	// calculate new viewport
-	vp := ss.Outline
+	vp := Default.Outline
 	vp.X = x
 	vp.Y = y
 
 	// fill shape with background color (erase it)
-	bg := ss.Background
+	bg := Default.Background
 	rend.SetDrawColor(bg.R, bg.G, bg.B, bg.A)
 	rend.FillRect(&vp)
 
@@ -29,28 +28,29 @@ func DrawSevenSegment(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) {
 	rend.SetViewport(&vp)
 
 	// draw border
-	gfx.RectangleColor(rend, 0, 0, vp.W, vp.H, ss.Border)
+	gfx.RectangleColor(rend, 0, 0, vp.W, vp.H, Default.Border)
 
 	// draw leds
+	d := &Default
 	for i := 0; i < 8; i++ {
-		led := ss.LedOff
+		led := d.LedOff
 		if (b>>i)&1 == 1 {
 			led = c
 		}
 		if i < 7 {
-			gfx.FilledPolygonColor(rend, ss.X[i][:], ss.Y[i][:], led)
+			gfx.FilledPolygonColor(rend, d.X[i][:], d.Y[i][:], led)
 		} else {
-			gfx.FilledCircleColor(rend, ss.Dot.X, ss.Dot.Y, ss.DotR, led)
+			gfx.FilledCircleColor(rend, d.Dot.X, d.Dot.Y, d.DotR, led)
 		}
 	}
 }
 
-// EncodeSevenSegment encodes a digit for a seven-segment display
+// Encode encodes a digit for a seven-segment display
 // the digit may be hexadecimal, decimal, or octal
-func EncodeSevenSegment(digit int, point bool) uint8 {
-	code := SevenSegment.Encode[16]
+func Encode(digit int, point bool) uint8 {
+	code := Default.Encode[16]
 	if digit >= 0 && digit < 16 {
-		code = SevenSegment.Encode[digit]
+		code = Default.Encode[digit]
 	}
 	if point {
 		code |= 0x80
@@ -58,8 +58,8 @@ func EncodeSevenSegment(digit int, point bool) uint8 {
 	return code
 }
 
-// SevenSegment is the config for drawing and encoding seven-segment displays
-var SevenSegment = struct {
+// Config is the type for configuring seven-segment display settings
+type Config = struct {
 	Encode     [17]uint8
 	Outline    sdl.Rect
 	X          [7][6]int16
@@ -69,7 +69,10 @@ var SevenSegment = struct {
 	Background sdl.Color
 	Border     sdl.Color
 	LedOff     sdl.Color
-}{
+}
+
+// Default holds the default settings for drawing a seven-segment display
+var Default = Config{
 	Encode: [17]uint8{
 		0077, 0006, 0133, 0117, // 0, 1, 2, 3
 		0146, 0155, 0175, 0007, // 4, 5, 6, 7
