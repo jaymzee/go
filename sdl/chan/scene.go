@@ -73,7 +73,7 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	}
 
 	window.SetTitle("chan")
-	seg7.Default.Border = seg7.Default.Background
+	seg7.Default.BorderColor = seg7.Default.FillColor
 
 	scene.ch1 = make(chan int)
 	go foo(scene.ch1)

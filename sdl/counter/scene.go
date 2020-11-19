@@ -67,7 +67,7 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 		scene.sans18 = font
 	}
 	window.SetTitle("seven-segment display")
-	// seg7.Default.Border = seg7.Default.Background
+	//seg7.Default.BorderColor = seg7.Default.FillColor
 }
 
 // Draw draws a single frame of the scene
