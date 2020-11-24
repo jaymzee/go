@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func sum(nums ...int) {
-	fmt.Print(nums, " ")
+	fmt.Printf("sum(%#v): ", nums)
 	total := 0
 	for _, num := range nums {
 		total += num
@@ -12,10 +12,10 @@ func sum(nums ...int) {
 }
 
 func main() {
-	nums := []int{1, 2, 3, 4}
 	sum()
 	sum(1)
 	sum(1, 2)
 	sum(1, 2, 3)
+	nums := []int{1, 2, 3, 4}
 	sum(nums...)
 }

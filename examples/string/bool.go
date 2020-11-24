@@ -7,13 +7,13 @@ import (
 )
 
 func boolToStr(b bool) {
-	fmt.Printf("%v %q\n", b, strconv.FormatBool(b))
+	fmt.Printf("strconv.FormatBool(%v): %q\n", b, strconv.FormatBool(b))
 }
 
 func strToBool(s string) {
 	b, err := strconv.ParseBool(s)
 	if err == nil {
-		fmt.Printf("%q %v\n", s, b)
+		fmt.Printf("strconv.ParseBool(%q): %v\n", s, b)
 	}
 }
 

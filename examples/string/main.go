@@ -21,11 +21,20 @@ func main() {
 	strToBool("false")
 	strToBool("true")
 
-	// sprintf
-	fmt.Printf("%q\n", fmt.Sprintf("%+8d", 97))
-
 	// print in hex with spaces
-	fmt.Printf("% x\n", "Hello World!")
-	sl := [5]int{10,11,12,13,3}
-	fmt.Printf("%T %02x\n", sl, sl)
+	hello := "Hello World!"
+	fmt.Printf("fmt \"%% x\", %q: % x\n", hello, hello)
+
+	// print arrays and slices in different radix
+	nums := [5]int{10,11,12,13,3}
+	fmt.Printf("fmt \"%%x\", %#v: %02x\n", nums, nums)
+
+	// scan
+	s := "1.1 2.7 3.14 4.2"
+	var a [4]float64
+	_, err := fmt.Sscan(s, &a[0], &a[1], &a[2], &a[3])
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("fmt.Sscan(%q): %v\n", s, a)
 }
