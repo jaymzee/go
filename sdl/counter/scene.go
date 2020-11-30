@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jaymzee/go/sdl/seg7"
+	"github.com/jaymzee/go/sdl/sevensegment"
 	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
@@ -28,6 +28,7 @@ var (
 type Scene struct {
 	counter int
 	sans18  *ttf.Font
+	ssd     *sevensegment.Display
 }
 
 // Loop is the event loop for the scene
@@ -66,8 +67,12 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.sans18 = font
 	}
+	if ssd, err := sevensegment.Open("seg7.json"); err != nil {
+		panic(err)
+	} else {
+		scene.ssd = ssd
+	}
 	window.SetTitle("seven-segment display")
-	//seg7.Default.BorderColor = seg7.Default.FillColor
 }
 
 // Draw draws a single frame of the scene
@@ -75,8 +80,8 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
 
-	code := seg7.Encode(scene.counter&0xF, false)
-	if err := seg7.Draw(renderer, 100, 100, code, Green); err != nil {
+	code := scene.ssd.Encode(scene.counter&0xF, false)
+	if err := scene.ssd.Draw(renderer, 100, 100, code, Green); err != nil {
 		panic(err)
 	}
 

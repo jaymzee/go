@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jaymzee/go/sdl/seg7"
+	"github.com/jaymzee/go/sdl/sevensegment"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"time"
@@ -27,6 +27,7 @@ type Scene struct {
 	ch1    chan int
 	ch2    chan int
 	sans18 *ttf.Font
+	ssd    *sevensegment.Display
 }
 
 // Loop is the event loop for the scene
@@ -71,9 +72,13 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.sans18 = font
 	}
+	if ssd, err := sevensegment.Open("seg7.json"); err != nil {
+		panic(err)
+	} else {
+		scene.ssd = ssd
+	}
 
 	window.SetTitle("chan")
-	seg7.Default.BorderColor = seg7.Default.FillColor
 
 	scene.ch1 = make(chan int)
 	go foo(scene.ch1)
@@ -86,13 +91,13 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	select {
 	case number := <-scene.ch1:
 		for i := 0; i < 4; i++ {
-			b := seg7.Encode(number>>(4*i)&0xF, false)
-			seg7.Draw(renderer, int32(250-50*i), 100, b, Green)
+			b := scene.ssd.Encode(number>>(4*i)&0xF, false)
+			scene.ssd.Draw(renderer, int32(250-50*i), 100, b, Green)
 		}
 	case number := <-scene.ch2:
 		for i := 0; i < 4; i++ {
-			b := seg7.Encode(number>>(4*i)&0xF, false)
-			seg7.Draw(renderer, int32(250-50*i), 200, b, Red)
+			b := scene.ssd.Encode(number>>(4*i)&0xF, false)
+			scene.ssd.Draw(renderer, int32(250-50*i), 200, b, Red)
 		}
 	}
 }
