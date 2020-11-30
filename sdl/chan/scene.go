@@ -78,7 +78,8 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.ssd1 = *disp
 		scene.ssd2 = *disp
-		scene.ssd2.OnColor = sdl.Color{R: 255, G: 0, B: 0, A: 255}
+		scene.ssd1.OnColor = Red
+		scene.ssd2.OnColor = Green
 	}
 
 	window.SetTitle("chan")
