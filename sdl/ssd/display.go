@@ -1,11 +1,9 @@
 package ssd
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
-	"os"
 )
 
 // Display holds the configuration for the seven-segment display
@@ -14,51 +12,12 @@ type Display struct {
 	Size        sdl.Rect
 	X           [7][6]int16
 	Y           [7][6]int16
-	P           sdl.Point
-	PR          int32
+	P           sdl.Point   `json:"point"`
+	PR          int32       `json:"pointRadius"`
 	FaceColor   sdl.Color
 	BorderColor sdl.Color
 	OnColor     sdl.Color
 	OffColor    sdl.Color
-}
-
-// Open returns a Display configured from file
-func Open(name string) (*Display, error) {
-	file, err := os.Open(name)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	info, err := file.Stat()
-	if err != nil {
-		return nil, err
-	}
-	bytes := make([]byte, info.Size())
-	_, err = file.Read(bytes)
-	if err != nil {
-		return nil, err
-	}
-	disp := new(Display)
-	err = json.Unmarshal(bytes, disp)
-	if err != nil {
-		return nil, err
-	}
-	return disp, nil
-}
-
-// Write saves display settings to file
-func (d *Display) Write(name string) error {
-	b, err := json.Marshal(d)
-	if err != nil {
-		return err
-	}
-	file, err := os.Create(name)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	file.Write(b)
-	return nil
 }
 
 // Draw draws a seven-segment display on the screen
@@ -69,7 +28,7 @@ func (d *Display) Write(name string) error {
 //  c is the color of the on state of the leds
 func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8) error {
 	// calculate new viewport
-	vp := sdl.Rect{x, y, d.Size.X, d.Size.Y}
+	vp := sdl.Rect{X: x, Y: y, W: d.Size.X, H: d.Size.Y}
 
 	// fill shape with background color (erase it)
 	fill := d.FaceColor
