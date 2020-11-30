@@ -18,10 +18,11 @@ type Display struct {
 	PSize       int32
 	FillColor   sdl.Color
 	BorderColor sdl.Color
+	LedOnColor  sdl.Color
 	LedOffColor sdl.Color
 }
 
-// Open reads the seg7 config from a file and returns a configured display
+// Open returns a Display configured from file
 func Open(name string) (*Display, error) {
 	file, err := os.Open(name)
 	if err != nil {
@@ -45,6 +46,7 @@ func Open(name string) (*Display, error) {
 	return disp, nil
 }
 
+// Write saves display settings to file
 func (d *Display) Write(name string) error {
 	b, err := json.Marshal(d)
 	if err != nil {
@@ -59,13 +61,13 @@ func (d *Display) Write(name string) error {
 	return nil
 }
 
-//Draw draws a seven-segment display on the screen
+// Draw draws a seven-segment display on the screen
 //  renderer is the renderer to draw on
 //  x is the x coordinate of the upper left corner
 //  y is the y coordinate of the upper left corner
 //  b drives the A,B,C,D,E,F,G leds (bit-0..bit-6 -> A..G, bit-7 -> dot)
 //  c is the color of the on state of the leds
-func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) error {
+func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8) error {
 	// calculate new viewport
 	vp := d.Border
 	vp.X = x
@@ -96,7 +98,7 @@ func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8, c sdl.Color) err
 	for i := 0; i < 8; i++ {
 		led := d.LedOffColor
 		if (b>>i)&1 == 1 {
-			led = c // led on color
+			led = d.LedOnColor
 		}
 		if i < 7 {
 			if !gfx.FilledPolygonColor(rend, d.X[i][:], d.Y[i][:], led) {

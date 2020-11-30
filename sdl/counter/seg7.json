@@ -21,5 +21,6 @@
     "PSize":3,
     "FillColor":{"R":16,"G":16,"B":16,"A":255},
     "BorderColor":{"R":255,"G":255,"B":255,"A":255},
+    "LedOnColor":{"R":0,"G":255,"B":0,"A":255},
     "LedOffColor":{"R":40,"G":40,"B":40,"A":255}
 }

@@ -92,12 +92,12 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	case number := <-scene.ch1:
 		for i := 0; i < 4; i++ {
 			b := scene.ssd.Encode(number>>(4*i)&0xF, false)
-			scene.ssd.Draw(renderer, int32(250-50*i), 100, b, Green)
+			scene.ssd.Draw(renderer, int32(250-50*i), 100, b)
 		}
 	case number := <-scene.ch2:
 		for i := 0; i < 4; i++ {
 			b := scene.ssd.Encode(number>>(4*i)&0xF, false)
-			scene.ssd.Draw(renderer, int32(250-50*i), 200, b, Red)
+			scene.ssd.Draw(renderer, int32(250-50*i), 200, b)
 		}
 	}
 }

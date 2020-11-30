@@ -81,7 +81,7 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.Clear()
 
 	code := scene.ssd.Encode(scene.counter&0xF, false)
-	if err := scene.ssd.Draw(renderer, 100, 100, code, Green); err != nil {
+	if err := scene.ssd.Draw(renderer, 100, 100, code); err != nil {
 		panic(err)
 	}
 
