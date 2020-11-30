@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jaymzee/go/sdl/sevensegment"
+	"github.com/jaymzee/go/sdl/ssd"
 	"github.com/veandco/go-sdl2/gfx"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
@@ -28,7 +28,7 @@ var (
 type Scene struct {
 	counter int
 	sans18  *ttf.Font
-	ssd     *sevensegment.Display
+	ssd     *ssd.Display
 }
 
 // Loop is the event loop for the scene
@@ -67,10 +67,10 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.sans18 = font
 	}
-	if ssd, err := sevensegment.Open("seg7.json"); err != nil {
+	if disp, err := ssd.Open("ssd10d75.json"); err != nil {
 		panic(err)
 	} else {
-		scene.ssd = ssd
+		scene.ssd = disp
 	}
 	window.SetTitle("seven-segment display")
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jaymzee/go/sdl/sevensegment"
+	"github.com/jaymzee/go/sdl/ssd"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"time"
@@ -27,7 +27,8 @@ type Scene struct {
 	ch1    chan int
 	ch2    chan int
 	sans18 *ttf.Font
-	ssd    *sevensegment.Display
+	ssd1   ssd.Display
+	ssd2   ssd.Display
 }
 
 // Loop is the event loop for the scene
@@ -72,10 +73,12 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.sans18 = font
 	}
-	if ssd, err := sevensegment.Open("seg7.json"); err != nil {
+	if disp, err := ssd.Open("ssd10d75.json"); err != nil {
 		panic(err)
 	} else {
-		scene.ssd = ssd
+		scene.ssd1 = *disp
+		scene.ssd2 = *disp
+		scene.ssd2.OnColor = sdl.Color{R: 255, G: 0, B: 0, A: 255}
 	}
 
 	window.SetTitle("chan")
@@ -88,16 +91,19 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 
 // Draw draws a single frame of the scene
 func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
+	var i int32
 	select {
 	case number := <-scene.ch1:
-		for i := 0; i < 4; i++ {
-			b := scene.ssd.Encode(number>>(4*i)&0xF, false)
-			scene.ssd.Draw(renderer, int32(250-50*i), 100, b)
+		for i = 0; i < 4; i++ {
+			digit := number >> (4 * i) & 0xF
+			b := scene.ssd1.Encode(digit, false)
+			scene.ssd1.Draw(renderer, 250-50*i, 100, b)
 		}
 	case number := <-scene.ch2:
-		for i := 0; i < 4; i++ {
-			b := scene.ssd.Encode(number>>(4*i)&0xF, false)
-			scene.ssd.Draw(renderer, int32(250-50*i), 200, b)
+		for i = 0; i < 4; i++ {
+			digit := number >> (4 * i) & 0xF
+			b := scene.ssd2.Encode(digit, false)
+			scene.ssd2.Draw(renderer, 250-50*i, 200, b)
 		}
 	}
 }

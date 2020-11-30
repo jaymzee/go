@@ -1,4 +1,4 @@
-package sevensegment
+package ssd
 
 import (
 	"encoding/json"
@@ -8,18 +8,18 @@ import (
 	"os"
 )
 
-// Display is the type for configuring seven-segment display settings
+// Display holds the configuration for the seven-segment display
 type Display struct {
-	Code        [17]uint8
-	Border      sdl.Rect
+	Encoder     [17]uint8
+	Size        sdl.Rect
 	X           [7][6]int16
 	Y           [7][6]int16
 	P           sdl.Point
-	PSize       int32
-	FillColor   sdl.Color
+	PR          int32
+	FaceColor   sdl.Color
 	BorderColor sdl.Color
-	LedOnColor  sdl.Color
-	LedOffColor sdl.Color
+	OnColor     sdl.Color
+	OffColor    sdl.Color
 }
 
 // Open returns a Display configured from file
@@ -69,12 +69,10 @@ func (d *Display) Write(name string) error {
 //  c is the color of the on state of the leds
 func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8) error {
 	// calculate new viewport
-	vp := d.Border
-	vp.X = x
-	vp.Y = y
+	vp := sdl.Rect{x, y, d.Size.X, d.Size.Y}
 
 	// fill shape with background color (erase it)
-	fill := d.FillColor
+	fill := d.FaceColor
 	if err := rend.SetDrawColor(fill.R, fill.G, fill.B, fill.A); err != nil {
 		return err
 	}
@@ -96,16 +94,16 @@ func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8) error {
 
 	// draw leds
 	for i := 0; i < 8; i++ {
-		led := d.LedOffColor
+		led := d.OffColor
 		if (b>>i)&1 == 1 {
-			led = d.LedOnColor
+			led = d.OnColor
 		}
 		if i < 7 {
 			if !gfx.FilledPolygonColor(rend, d.X[i][:], d.Y[i][:], led) {
 				return errors.New("draw seven-segment led failed")
 			}
 		} else {
-			if !gfx.FilledCircleColor(rend, d.P.X, d.P.Y, d.PSize, led) {
+			if !gfx.FilledCircleColor(rend, d.P.X, d.P.Y, d.PR, led) {
 				return errors.New("draw seven-segment led failed")
 			}
 		}
@@ -117,9 +115,9 @@ func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8) error {
 // Encode encodes a digit for a seven-segment display
 // the digit may be hexadecimal, decimal, or octal
 func (d *Display) Encode(digit int, point bool) uint8 {
-	code := d.Code[16] // indicate an error
+	code := d.Encoder[16] // default to indicating an error
 	if digit >= 0 && digit < 16 {
-		code = d.Code[digit]
+		code = d.Encoder[digit]
 	}
 	if point {
 		code |= 0x80
