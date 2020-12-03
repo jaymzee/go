@@ -73,7 +73,7 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	} else {
 		scene.sans18 = font
 	}
-	if disp, err := ssd.Open("ssd10d75.json"); err != nil {
+	if disp, err := ssd.OpenSSD("ssd10d75.json"); err != nil {
 		panic(err)
 	} else {
 		scene.ssd1 = *disp

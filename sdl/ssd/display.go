@@ -12,8 +12,8 @@ type Display struct {
 	Size        sdl.Rect
 	X           [7][6]int16
 	Y           [7][6]int16
-	P           sdl.Point   `json:"point"`
-	PR          int32       `json:"pointRadius"`
+	P           sdl.Point `json:"point"`
+	PR          int32     `json:"pointRadius"`
 	FaceColor   sdl.Color
 	BorderColor sdl.Color
 	OnColor     sdl.Color
@@ -25,7 +25,6 @@ type Display struct {
 //  x is the x coordinate of the upper left corner
 //  y is the y coordinate of the upper left corner
 //  b drives the A,B,C,D,E,F,G leds (bit-0..bit-6 -> A..G, bit-7 -> dot)
-//  c is the color of the on state of the leds
 func (d *Display) Draw(rend *sdl.Renderer, x, y int32, b uint8) error {
 	// calculate new viewport
 	vp := sdl.Rect{X: x, Y: y, W: d.Size.X, H: d.Size.Y}
