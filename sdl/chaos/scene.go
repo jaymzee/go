@@ -15,7 +15,7 @@ const (
 	// ScreenHeight of window
 	ScreenHeight = 800
 	// FPS is frames per second
-	FPS = 10
+	FPS = 30
 	PHI = (1 + 2.23606797749979) / 2
 )
 
@@ -69,6 +69,8 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 		scene.sans18 = font
 	}
 	window.SetTitle("chaos")
+
+	pentagon = CreatePentagon()
 }
 
 func (scene *Scene) tick(window *sdl.Window, renderer *sdl.Renderer) {
@@ -93,6 +95,8 @@ var triangle = Shape{
 	},
 	Factor: 1 / 2.0,
 }
+
+var pentagon *Shape
 
 var vicsek = Shape{
 	VertexList: []Point2D{
@@ -119,7 +123,7 @@ var carpet = Shape{
 	Factor: 2 / 3.0,
 }
 
-func CreatePentagon() Shape {
+func CreatePentagon() *Shape {
 	var vlist [5]Point2D
 	w := float64(ScreenWidth)
 	h := float64(ScreenHeight)
@@ -128,7 +132,7 @@ func CreatePentagon() Shape {
 		y := h/20.0 + h/2.0*(1.0-math.Cos(float64(n)*2.0*math.Pi/5.0))
 		vlist[n] = Point2D{int32(x), int32(y)}
 	}
-	return Shape{VertexList: vlist[:], Factor: 1 / PHI}
+	return &Shape{VertexList: vlist[:], Factor: 1 / PHI}
 }
 
 func sierpinski(p Point2D, vlist []Point2D, factor float64) Point2D {
@@ -147,7 +151,7 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 	renderer.SetDrawColor(0, 0, 0, 255)
 	renderer.Clear()
 	renderer.SetDrawColor(0, 255, 0, 255)
-	shape := &carpet
+	shape := pentagon
 	p := Point2D{ScreenWidth / 2, ScreenHeight / 2}
 	for i := 0; i < 10000; i++ {
 		if i > 5 {
