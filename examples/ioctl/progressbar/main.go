@@ -1,24 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
-	"unsafe"
 )
 
 const (
-	ONE_MSEC    = 1000 * 1000
-	_TIOCGWINSZ = 0x5413 // On OSX use 1074295912. Thanks zeebo
-	NUM         = 100
+	ONE_MSEC = 1000 * 1000
+	NUM      = 100
 )
 
 func main() {
 	var bar string
 
-	cols := TerminalWidth()
+	cols, err := TerminalWidth()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\ndefaulting to %d columns", err, cols)
+	}
 
 	for i := 0; i <= NUM; i++ {
 		bar = progress(i, NUM, cols)
@@ -51,32 +52,10 @@ func progress(current, total, cols int) string {
 	return Bold(prefix) + bar_start + Highlight(bar) + bar_end
 }
 
-func TerminalWidth() int {
+func TerminalWidth() (int, error) {
 	sizeobj, err := GetWinsize()
 	if err != nil {
-		return 80
+		return 80, err
 	}
-	return int(sizeobj.Col)
-}
-
-type Winsize struct {
-	Row    uint16
-	Col    uint16
-	Xpixel uint16
-	Ypixel uint16
-}
-
-func GetWinsize() (*Winsize, error) {
-	ws := new(Winsize)
-
-	r1, _, errno := syscall.Syscall(syscall.SYS_IOCTL,
-		uintptr(syscall.Stdin),
-		uintptr(_TIOCGWINSZ),
-		uintptr(unsafe.Pointer(ws)),
-	)
-
-	if int(r1) == -1 {
-		return nil, os.NewSyscallError("GetWinsize", errno)
-	}
-	return ws, nil
+	return int(sizeobj.Col), nil
 }
