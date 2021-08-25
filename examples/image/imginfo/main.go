@@ -28,18 +28,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(imgfmt)
-	fmt.Printf("%T\n", img)
 
-	fmt.Println(img.ColorModel())
+	fmt.Printf("%s %T %v\n", imgfmt, img, img.Bounds().Max)
+
 	if img, ok := img.(*image.Paletted); ok {
-		fmt.Printf("Paletted")
+		fmt.Println("Palette:")
 		for i, c := range img.Palette {
 			fmt.Println(i, c)
 		}
-		fmt.Println(len(img.Pix))
+		fmt.Printf("pixels: %v\n", len(img.Pix))
 	}
 	if img, ok := img.(*image.RGBA); ok {
-		fmt.Println(len(img.Pix))
+		fmt.Printf("pixels: %v\n", len(img.Pix))
+	}
+	if img, ok := img.(*image.YCbCr); ok {
+		fmt.Printf("pixels: %v\n", len(img.Y))
 	}
 }
