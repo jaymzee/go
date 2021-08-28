@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"encoding/hex"
+	"fmt"
 )
 
 func main() {

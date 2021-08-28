@@ -1,22 +1,22 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha1"
 	"encoding/hex"
-	"fmt"
-	"os"
-	"log"
 	"flag"
-	"bufio"
+	"fmt"
+	"log"
+	"os"
 )
 
 func fromStdin() {
-		h := sha1.New()
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			fmt.Fprintln(h, scanner.Text())
-		}
-		fmt.Printf("%s  -\n", hex.EncodeToString(h.Sum(nil)))
+	h := sha1.New()
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		fmt.Fprintln(h, scanner.Text())
+	}
+	fmt.Printf("%s  -\n", hex.EncodeToString(h.Sum(nil)))
 }
 
 func sha1sumBytes(data []byte) string {
