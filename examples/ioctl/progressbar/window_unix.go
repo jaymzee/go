@@ -1,8 +1,10 @@
+// +build linux darwin
+
 package main
 
 import (
-	"os"
 	"golang.org/x/sys/unix"
+	"os"
 )
 
 func GetWinsize() (*Winsize, error) {
