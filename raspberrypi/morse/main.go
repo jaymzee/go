@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jaymzee/gpio0"
-	"github.com/jaymzee/morse"
+	"io"
 	"log"
 	"os"
 	"os/signal"
@@ -50,7 +50,8 @@ func main() {
 	// loop sending message forever
 	fmt.Printf("Sending morse code on gpio pin %d\n", pinNumber)
 	for {
-		morse.Send(led, []byte(message))
+		// morse.Send(led, messgae)
+		io.WriteString(led, message)
 	}
 }
 
