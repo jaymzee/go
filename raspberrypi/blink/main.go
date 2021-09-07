@@ -41,7 +41,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	led, err := gpio0.OpenLED(pinNumber)
+	led, err := gpio0.OpenGPIO(pinNumber, false)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
