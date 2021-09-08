@@ -45,11 +45,24 @@ void GetConsoleWindowSize(struct WindowSize *ws)
     ws->rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 
     // get rows and columns using stty
-    stty_size(ws);
+    // stty_size(ws);
 
     // if font size is sensible use that to calculate the window size
     if (fontW > 1 && fontW < 256 && fontH > 1 && fontH < 256) {
         ws->xres = ws->cols * fontW;
         ws->yres = ws->rows * fontH;
     }
+
+    // query terminal directly
+    int x=0, y=0;
+    printf("\x1b[14t");
+    scanf("\x1b[4;%d;%dt", &y, &x);
+    scanf("\x1b[4;%d;%dt", &y, &x);
+    if (x > ws->xres) {
+        ws->xres = x;
+    }
+    if (y > ws->yres) {
+        ws->yres = y;
+    }
+    printf("(%d, %d)\n", x, y);
 }
