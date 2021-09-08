@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jaymzee/gpio0"
+	"github.com/jaymzee/morse"
 	"log"
 	"os"
 	"os/signal"
@@ -53,8 +54,9 @@ func main() {
 
 	setupCtrlCHandler(led)
 
+	sender := morse.NewSender(led)
 	for {
-		_, err = fmt.Fprint(led, message)
+		_, err = fmt.Fprint(sender, message)
 		if err != nil {
 			panic(err)
 		}
