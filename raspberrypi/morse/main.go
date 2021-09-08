@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jaymzee/gpio0"
-	"io"
 	"log"
 	"os"
 	"os/signal"
@@ -53,8 +52,9 @@ func main() {
 	}
 
 	setupCtrlCHandler(led)
+
 	for {
-		_, err = io.WriteString(led, message)
+		_, err = fmt.Fprint(led, message)
 		if err != nil {
 			panic(err)
 		}
