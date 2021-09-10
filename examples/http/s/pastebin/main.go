@@ -15,7 +15,7 @@ import (
 )
 
 const maxUploadSize = 2 * 1024 * 1024 // 2 mb
-const uploadPath = "./tmp"
+const uploadPath = "./public/uploads"
 
 func main() {
 	http.HandleFunc("/upload", uploadFileHandler())
@@ -30,7 +30,7 @@ func main() {
 func uploadFileHandler() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
-			t, _ := template.ParseFiles("upload.gtpl")
+			t, _ := template.ParseFiles("public/upload.gtpl")
 			t.Execute(w, nil)
 			return
 		}
@@ -41,7 +41,7 @@ func uploadFileHandler() http.HandlerFunc {
 		}
 
 		// parse and validate file and post parameters
-		file, fileHeader, err := r.FormFile("uploadFile")
+		file, fileHeader, err := r.FormFile("f")
 		if err != nil {
 			renderError(w, "INVALID_FILE", http.StatusBadRequest)
 			return
@@ -64,8 +64,9 @@ func uploadFileHandler() http.HandlerFunc {
 		// check file type, detectcontenttype only needs the first 512 bytes
 		detectedFileType := http.DetectContentType(fileBytes)
 		switch detectedFileType {
-		case "image/jpeg", "image/jpg":
-		case "image/gif", "image/png":
+		case "image/jpeg":
+		case "image/png":
+		case "image/gif":
 		case "application/pdf":
 			break
 		default:
@@ -73,12 +74,12 @@ func uploadFileHandler() http.HandlerFunc {
 			return
 		}
 		fileName := randToken(12)
-		fileEndings, err := mime.ExtensionsByType(detectedFileType)
+		ext, err := mime.ExtensionsByType(detectedFileType)
 		if err != nil {
 			renderError(w, "CANT_READ_FILE_TYPE", http.StatusInternalServerError)
 			return
 		}
-		newPath := filepath.Join(uploadPath, fileName+fileEndings[0])
+		newPath := filepath.Join(uploadPath, fileName+ext[len(ext)-1])
 		fmt.Printf("FileType: %s, File: %s\n", detectedFileType, newPath)
 
 		// write file
