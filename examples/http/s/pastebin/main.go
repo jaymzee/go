@@ -14,16 +14,17 @@ import (
 	"path/filepath"
 )
 
-const maxUploadSize = 2 * 1024 * 1024 // 2 mb
-const uploadPath = "./public/uploads"
+const maxUploadSize = 4 * 1024 * 1024 // 4 MB
+const uploadDir = "./public/uploads"
 
 func main() {
+	fs := http.FileServer(http.Dir(uploadDir))
+	http.Handle("/files/", http.StripPrefix("/files/", fs))
 	http.HandleFunc("/upload", uploadFileHandler())
 
-	fs := http.FileServer(http.Dir(uploadPath))
-	http.Handle("/files/", http.StripPrefix("/files", fs))
-
-	log.Print("Server started on localhost:8080, use /upload for uploading files and /files/{fileName} for downloading")
+	log.Println("Server started on localhost:8080, routes:")
+	log.Println("  /upload")
+	log.Println("  /files/")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
@@ -34,36 +35,36 @@ func uploadFileHandler() http.HandlerFunc {
 			t.Execute(w, nil)
 			return
 		}
+
+		// POST so parse the form
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-			fmt.Printf("Could not parse multipart form: %v\n", err)
-			renderError(w, "CANT_PARSE_FORM", http.StatusInternalServerError)
+			log.Printf("parse multipart form failure: %v\n", err)
+			renderError(w, "INVALID_FORM", http.StatusBadRequest)
 			return
 		}
-
-		// parse and validate file and post parameters
+		// open the uploaded file
 		file, fileHeader, err := r.FormFile("f")
 		if err != nil {
 			renderError(w, "INVALID_FILE", http.StatusBadRequest)
 			return
 		}
 		defer file.Close()
-		// Get and print out file size
 		fileSize := fileHeader.Size
-		fmt.Printf("File size (bytes): %v\n", fileSize)
 		// validate file size
 		if fileSize > maxUploadSize {
 			renderError(w, "FILE_TOO_BIG", http.StatusBadRequest)
 			return
 		}
+		// it validates so read the uploaded file
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
-			renderError(w, "INVALID_FILE", http.StatusBadRequest)
+			renderInternalError(w, "READ_FILE_FAILED")
 			return
 		}
 
 		// check file type, detectcontenttype only needs the first 512 bytes
-		detectedFileType := http.DetectContentType(fileBytes)
-		switch detectedFileType {
+		fileType := http.DetectContentType(fileBytes)
+		switch fileType {
 		case "image/jpeg":
 		case "image/png":
 		case "image/gif":
@@ -73,33 +74,41 @@ func uploadFileHandler() http.HandlerFunc {
 			renderError(w, "INVALID_FILE_TYPE", http.StatusBadRequest)
 			return
 		}
-		fileName := randToken(12)
-		ext, err := mime.ExtensionsByType(detectedFileType)
+		fileExtensions, err := mime.ExtensionsByType(fileType)
 		if err != nil {
-			renderError(w, "CANT_READ_FILE_TYPE", http.StatusInternalServerError)
+			renderInternalError(w, "FILE_EXTENSION")
 			return
 		}
-		newPath := filepath.Join(uploadPath, fileName+ext[len(ext)-1])
-		fmt.Printf("FileType: %s, File: %s\n", detectedFileType, newPath)
+		fileName := randToken(12) + fileExtensions[len(fileExtensions)-1]
+		filePath := filepath.Join(uploadDir, fileName)
+		log.Printf("upload %s %s %d bytes\n", fileType, filePath, fileSize)
 
-		// write file
-		newFile, err := os.Create(newPath)
+		// write file to storage
+		newFile, err := os.Create(filePath)
 		if err != nil {
-			renderError(w, "CANT_WRITE_FILE", http.StatusInternalServerError)
+			log.Printf("upload failed: %v\n", err)
+			renderInternalError(w, "UPLOAD_FAILED")
 			return
 		}
-		defer newFile.Close() // idempotent, okay to call twice
-		if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
-			renderError(w, "CANT_WRITE_FILE", http.StatusInternalServerError)
+		defer newFile.Close()
+		_, err = newFile.Write(fileBytes)
+		if err != nil {
+			log.Printf("upload failed: %v\n", err)
+			renderInternalError(w, "UPLOAD_FAILED")
 			return
 		}
-		w.Write([]byte("SUCCESS"))
+		fmt.Fprintln(w, "SUCCESS")
 	})
 }
 
 func renderError(w http.ResponseWriter, message string, statusCode int) {
-	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte(message))
+	w.WriteHeader(statusCode)
+	fmt.Fprintln(w, message)
+}
+
+func renderInternalError(w http.ResponseWriter, message string) {
+	w.WriteHeader(http.StatusInternalServerError)
+	fmt.Fprintln(w, message)
 }
 
 func randToken(length int) string {
