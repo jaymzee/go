@@ -5,16 +5,15 @@ import (
 	"io"
 	"io/fs"
 	"strconv"
-	"syscall"
 )
 
 const (
-	Red = "1;31"
-	Green = "1;32"
-	Yellow = "1;33"
-	Blue = "1;34"
-	Magenta = "1;35"
-	Cyan = "1;36"
+	Red      = "1;31"
+	Green    = "1;32"
+	Yellow   = "1;33"
+	Blue     = "1;34"
+	Magenta  = "1;35"
+	Cyan     = "1;36"
 	GreenRev = "7;32"
 )
 
@@ -35,24 +34,10 @@ func printDir(w io.Writer, entries []fs.FileInfo) {
 func printDirLong(w io.Writer, entries []fs.FileInfo) error {
 	// determine field widths
 	var (
-		maxMode  int
-		maxSize  int64
-		maxNlink uint32
-		maxUid   uint32
-		maxGid   uint32
+		maxMode int
+		maxSize int64
 	)
 	for _, info := range entries {
-		if stat, ok := info.Sys().(*syscall.Stat_t); ok {
-			if stat.Nlink > maxNlink {
-				maxNlink = stat.Nlink
-			}
-			if stat.Uid > maxUid {
-				maxUid = stat.Uid
-			}
-			if stat.Gid > maxGid {
-				maxGid = stat.Gid
-			}
-		}
 		mode := info.Mode().String()
 		if len(mode) > maxMode {
 			maxMode = len(mode)
@@ -65,8 +50,7 @@ func printDirLong(w io.Writer, entries []fs.FileInfo) error {
 	// format strings are built from the calculated field width
 	ifmt := FileInfoFormat{
 		Mode: fmt.Sprintf("%%%ds", maxMode),
-		Stat: fmt.Sprintf(" %%%dd %%%dd %%%dd",
-			len(utoa(maxNlink)), len(utoa(maxUid)), len(utoa(maxGid))),
+		Stat: calcStatFormatString(entries),
 		Size: fmt.Sprintf(" %%%dd", len(itoa(maxSize))),
 		Time: " Jan 02 15:04",
 	}
@@ -90,9 +74,7 @@ func printFileInfo(w io.Writer, info fs.FileInfo, ifmt *FileInfoFormat) {
 
 	// write the thing
 	io.WriteString(w, mode)
-	if stat, ok := info.Sys().(*syscall.Stat_t); ok {
-		fmt.Fprintf(w, ifmt.Stat, stat.Nlink, stat.Uid, stat.Gid)
-	}
+	printStat(w, info, ifmt.Stat)
 	fmt.Fprintf(w, ifmt.Size, info.Size())
 	mtime := info.ModTime().Format(ifmt.Time)
 	timeFmt := fmt.Sprintf("%%%ds ", len(ifmt.Time))
@@ -106,7 +88,7 @@ func colorizeFilename(info fs.FileInfo) string {
 		mode := info.Mode()
 		perm := int(mode.Perm())
 		if mode.IsRegular() {
-			if perm & 0111 != 0 {
+			if perm&0111 != 0 {
 				// if executable
 				name = colorText(info.Name(), Green)
 			}

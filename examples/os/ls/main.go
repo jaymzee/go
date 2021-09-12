@@ -13,6 +13,7 @@ var config struct {
 }
 
 func main() {
+	EnableANSI()
 	flag.BoolVar(&config.cFlag, "color", false, "ansi color")
 	flag.BoolVar(&config.lFlag, "l", false, "long format")
 	flag.Parse()
