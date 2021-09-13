@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"strconv"
 )
 
 const (
@@ -113,12 +112,4 @@ func colorizeFilename(info fs.FileInfo) string {
 
 func colorText(s string, color string) string {
 	return fmt.Sprintf("\x1b[%sm%s\x1b[m", color, s)
-}
-
-func utoa(i uint32) string {
-	return strconv.FormatUint(uint64(i), 10)
-}
-
-func itoa(i int64) string {
-	return strconv.FormatInt(i, 10)
 }

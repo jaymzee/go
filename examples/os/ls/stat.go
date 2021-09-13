@@ -1,4 +1,4 @@
-// +build linux darwin
+// +build linux darwin freebsd
 
 package main
 
@@ -11,21 +11,16 @@ import (
 
 func calcStatFormatString(entries []fs.FileInfo) string {
 	var (
-		maxNlink uint32
-		maxUid   uint32
-		maxGid   uint32
+		maxNlink uint64
+		maxUid   uint64
+		maxGid   uint64
 	)
 	for _, info := range entries {
 		if stat, ok := info.Sys().(*syscall.Stat_t); ok {
-			if stat.Nlink > maxNlink {
-				maxNlink = stat.Nlink
-			}
-			if stat.Uid > maxUid {
-				maxUid = stat.Uid
-			}
-			if stat.Gid > maxGid {
-				maxGid = stat.Gid
-			}
+			// cast everything to uint64 to make compatible with some os's
+			maxNlink = max(maxNlink, uint64(stat.Nlink))
+			maxUid = max(maxUid, uint64(stat.Uid))
+			maxGid = max(maxGid, uint64(stat.Gid))
 		}
 	}
 	return fmt.Sprintf(" %%%dd %%%dd %%%dd",
