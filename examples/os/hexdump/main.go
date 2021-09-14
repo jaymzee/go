@@ -1,10 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
-	"flag"
 )
 
 func main() {
@@ -62,7 +62,7 @@ func printHex(addr int, bytes []byte) int {
 	fmt.Printf("%08x", addr)
 	col := 8
 	for i, b := range bytes {
-		if i % 8 == 0 {
+		if i%8 == 0 {
 			fmt.Printf("  %02x", b)
 			col += 4
 		} else {
