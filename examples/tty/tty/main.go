@@ -10,17 +10,15 @@ import (
 )
 
 func main() {
-	tty := ttyname()
-	fmt.Printf("%s\n", tty)
+	fmt.Printf("%s\n", ttyname())
+	fmt.Printf("console=%v\n", isaconsole())
+}
 
-	pattern := regexp.MustCompile(`tty\d`)
-	if pattern.MatchString(tty) {
-		fmt.Println("console")
-	} else {
-		fmt.Println("not a console")
-	}
+func isaconsole() bool {
+	pattern := regexp.MustCompile(`/dev/tty\d`)
+	return pattern.MatchString(ttyname())
 }
 
 func ttyname() string {
-	return C.GoString(C.ttyname(0))
+	return C.GoString(C.ttyname(C.STDIN_FILENO))
 }
