@@ -2,36 +2,51 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
+	"log"
 	"os"
+	"fmt"
 )
 
 func main() {
+	var nFlag bool
+
+	flag.BoolVar(&nFlag, "n", false, "display total bytes copied")
 	flag.Parse()
 
+	var total int64 = 0
+
 	if len(flag.Args()) == 0 {
-		io.Copy(os.Stdout, os.Stdin)
-		os.Exit(0)
+		n, err := io.Copy(os.Stdout, os.Stdin)
+		if err != nil {
+			log.Fatal(err)
+		}
+		total = n
+	}
+	for _, arg := range flag.Args() {
+		n, err := cat(arg)
+		if err != nil {
+			log.Fatal(err)
+		}
+		total += n
 	}
 
-	for _, arg := range flag.Args() {
-		err := cat(arg)
-		if err != nil {
-			fmt.Fprintln(os.Stdout, err)
-			os.Exit(1)
-		}
+	if nFlag {
+		fmt.Fprintf(os.Stderr, "%d\n", total)
 	}
 }
 
-func cat(filename string) error {
+func cat(filename string) (int64, error) {
 	r, err := os.Open(filename)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer r.Close()
 
-	io.Copy(os.Stdout, r)
+	n, err := io.Copy(os.Stdout, r)
+	if err != nil {
+		return 0, err
+	}
 
-	return nil
+	return n, nil
 }
