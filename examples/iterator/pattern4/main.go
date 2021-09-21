@@ -9,8 +9,10 @@ import "fmt"
 func main() {
 	nums := []int{1, 2, 3, 4, 5}
 	printSequence("nums", NewIntsIterator(nums))
-	fmt.Println("sum:", foldInt(NewIntsIterator(nums), func(a, v int) int { return a + v }, 0))
-	fmt.Println("product:", foldInt(NewIntsIterator(nums), func(a, v int) int { return a * v }, 1))
+	fmt.Println("sum:", foldInt(NewIntsIterator(nums),
+		func(a, v int) int { return a + v }, 0))
+	fmt.Println("product:", foldInt(NewIntsIterator(nums),
+		func(a, v int) int { return a * v }, 1))
 	printSequence("fibonacci", NewFibonacci(10))
 }
 

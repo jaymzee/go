@@ -40,7 +40,12 @@ func main() {
 	})
 	fmt.Println("sum with iterator", sum)
 
-	fmt.Println("sum with fold", fold(nums, func(a, b int) int { return a + b }, 0))
-	fmt.Println("product with fold", fold(nums, func(a, b int) int { return a * b }, 1))
-	fmt.Println("product with reduce", reduce(nums, func(a, b int) int { return a * b }))
+	sum2 := fold(nums, func(a, b int) int { return a + b }, 0)
+	fmt.Println("sum with fold", sum2)
+
+	prod1 := fold(nums, func(a, b int) int { return a * b }, 1)
+	fmt.Println("product with fold", prod1)
+
+	prod2 := reduce(nums, func(a, b int) int { return a * b })
+	fmt.Println("product with reduce", prod2)
 }
