@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"html/template"
-	"io/ioutil"
+	"io"
 	"log"
 	"mime"
 	"net/http"
@@ -30,8 +30,14 @@ func main() {
 
 func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("public/upload.gtpl")
-		t.Execute(w, nil)
+		t, err := template.ParseFiles("public/upload.gtpl")
+		if err != nil {
+			renderError(w, "BAD_TEMPLATE", 500)
+		}
+		err = t.Execute(w, "upload file")
+		if err != nil {
+			renderError(w, "TEMPLATE_EXEC", 500)
+		}
 		return
 	}
 
@@ -57,9 +63,9 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//  read upload bytes
-	fileBytes, err := ioutil.ReadAll(file)
+	fileBytes, err := io.ReadAll(file)
 	if err != nil {
-		renderInternalError(w, "READ_FILE_FAILED")
+		renderError(w, "READ_FILE_FAILED", 500)
 		return
 	}
 	//  check file type, DetectContentType only needs the first 512 bytes
@@ -76,34 +82,26 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fileExtensions, err := mime.ExtensionsByType(fileType)
 	if err != nil {
-		renderInternalError(w, "FILE_EXTENSION")
+		renderError(w, "FILE_EXTENSION", 500)
 		return
 	}
-	fileName := randToken(12) + fileExtensions[len(fileExtensions)-1]
+	token, err := randToken(12)
+	if err != nil {
+		renderError(w, "RANDOM_TOKEN", 500)
+		return
+	}
+	fileName := token + fileExtensions[len(fileExtensions)-1]
 
 	// write file to upload folder
 	filePath := filepath.Join(uploadDir, fileName)
-	err = writeFile(filePath, fileBytes)
+	err = os.WriteFile(filePath, fileBytes, 0666)
 	if err != nil {
 		log.Printf("upload failed: %v\n", err)
-		renderInternalError(w, "UPLOAD_FAILED")
+		renderError(w, "UPLOAD_FAILED", 500)
 		return
 	}
 	log.Printf("upload %s %s %d bytes\n", fileType, filePath, fileSize)
 	fmt.Fprintln(w, "SUCCESS")
-}
-
-func writeFile(name string, data []byte) error {
-	newFile, err := os.Create(name)
-	if err != nil {
-		return err
-	}
-	defer newFile.Close()
-	_, err = newFile.Write(data)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func renderError(w http.ResponseWriter, message string, statusCode int) {
@@ -111,13 +109,11 @@ func renderError(w http.ResponseWriter, message string, statusCode int) {
 	fmt.Fprintln(w, message)
 }
 
-func renderInternalError(w http.ResponseWriter, message string) {
-	w.WriteHeader(http.StatusInternalServerError)
-	fmt.Fprintln(w, message)
-}
-
-func randToken(length int) string {
+func randToken(length int) (string, error) {
 	b := make([]byte, length)
-	rand.Read(b)
-	return fmt.Sprintf("%x", b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", b), nil
 }
