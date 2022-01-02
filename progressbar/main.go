@@ -49,7 +49,11 @@ func progress(current, total, cols int) string {
 
 	bar := strings.Repeat("█", amount) + strings.Repeat(" ", remain)
 
-	return Bold(prefix) + bar_start + Highlight(bar) + bar_end
+	if current < total {
+		return Bold(prefix) + bar_start + Highlight(bar) + bar_end
+	} else {
+		return "done." + strings.Repeat(" ", cols - 5)
+	}
 }
 
 func TerminalWidth() (int, error) {
