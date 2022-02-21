@@ -52,20 +52,6 @@ func (scene *Scene) Loop(window *sdl.Window, renderer *sdl.Renderer) {
 	}
 }
 
-func foo(ch chan int) {
-	for i := 0; ; i++ {
-		ch <- i
-		time.Sleep(1000 * time.Millisecond)
-	}
-}
-
-func bar(ch chan int) {
-	for i := 0; ; i++ {
-		ch <- i
-		time.Sleep(16666 * time.Microsecond)
-	}
-}
-
 // NewScene initializes the scene
 func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	if font, err := ttf.OpenFont("DejaVuSans.ttf", 18); err != nil {
@@ -85,9 +71,9 @@ func (scene *Scene) init(window *sdl.Window, renderer *sdl.Renderer) {
 	window.SetTitle("chan")
 
 	scene.ch1 = make(chan int)
-	go foo(scene.ch1)
+	go ticker(scene.ch1, 1000*time.Millisecond)
 	scene.ch2 = make(chan int)
-	go bar(scene.ch2)
+	go ticker(scene.ch2, 16666*time.Microsecond)
 }
 
 // Draw draws a single frame of the scene
@@ -106,5 +92,12 @@ func (scene *Scene) draw(window *sdl.Window, renderer *sdl.Renderer) {
 			b := scene.ssd2.Encode(digit, false)
 			scene.ssd2.Draw(renderer, 250-50*i, 200, b)
 		}
+	}
+}
+
+func ticker(ch chan int, interval time.Duration) {
+	for i := 0; ; i++ {
+		ch <- i
+		time.Sleep(interval)
 	}
 }
