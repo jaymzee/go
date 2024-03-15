@@ -1,0 +1,4 @@
+github.com/jaymzee/go v0.0.0-20220221115947-9e30b8fffcc2 h1:S6PV1aNUVsC8KnSYae1YwtunIo4VhNTlQTT4oNKZqdk=
+github.com/jaymzee/go v0.0.0-20220221115947-9e30b8fffcc2/go.mod h1:jQfuWwdl6/DV2xyO8CxZHjMHGMKWg/tCYx7XIquI/uI=
+github.com/veandco/go-sdl2 v0.4.38 h1:lx8syOA2ccXlgViYkQe2Kn/4xt+p9mdd1Qc/yYMrmSo=
+github.com/veandco/go-sdl2 v0.4.38/go.mod h1:OROqMhHD43nT4/i9crJukyVecjPNYYuCofep6SNiAjY=
